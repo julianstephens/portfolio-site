@@ -1,0 +1,755 @@
+---
+title: Building a Web App with Stripe Pt. 1
+date: 2022-10-12T09:15:00-0400
+description: A tutorial series to create an online store with React, Golang, and Stripe.
+tags: Fullstack, Frontend, React, Golang, Stripe, Docker, Programming
+---
+
+## Intro
+
+In this tutorial, we’ll be creating an online clothing store using React, Golang, Docker, and Stripe. If you’ve never used any of these tools before that’s completely okay! This is written with beginners in mind, and all of the code needed to complete this project is provided along with step-by-step instructions on setting it up. Explanations are provided for most steps. However, for detailed information on the tools themselves and their usage, please see the associated documentation.
+
+<aside>
+  ✨ Tip: For an added challenge, try writing the code for each section without
+  looking at the snippets first. It’s totally fine if you find your own way to
+  do things!
+</aside>
+
+This is a big project, so the tutorial is split into several parts. In this first module, we’ll get the environment setup and basic project foundation laid before jumping into the heavier programming. The source code for the finished project is also provided [here](https://github.com/julianstephens/stripe-shopping-app). **If you have any questions or problems following this tutorial, please open an issue on the [project GitHub repo](https://github.com/julianstephens/stripe-shopping-app).**
+
+### Prerequisite Installations
+
+Here’s a list of tools you’ll need to complete this project. There are installation prompts and/or instructions for each tool (except Git) throughout the article, but you can also get everything installed before starting if you’d like.
+
+- [Golang](https://go.dev/doc/install)
+- [nodejs](https://nodejs.org/en/download/), [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm), & [npx](https://www.npmjs.com/package/npx)
+- [Docker](https://docs.docker.com/engine/install/)
+- [Git](https://git-scm.com/downloads)
+
+Let’s get started!
+
+---
+
+## API & DB Planning
+
+I’ve been burned by jumping into a new project without a plan enough times to get a little sweaty without having a rough idea of where I’m going. Before we start writing any code, let’s get basic sketch of what features we’d like to have and what our backend will look like.
+
+**Features:**
+
+- As a user, I can create an account.
+- As a user, I can login to my existing account
+- As a user, I can view a list of products available for purchase.
+- As a user, I can add items to my cart.
+- As a user, I can view my cart.
+- As a user, I can complete a purchase.
+- As a user, I can like a product.
+- As a user, I can view a list of my liked products.
+
+That seems like a good start to get the basic structure of an e-commerce store in place. From here, we can map out what API routes we’ll need for each item.
+
+<div className="overflow-x">
+  <table className="table-auto overflow-scroll w-full">
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Route</th>
+        <th>HTTP Method</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Create account</td>
+        <td>/auth/register</td>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <td>Login</td>
+        <td>/auth/login</td>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <td>View products</td>
+        <td>/products</td>
+        <td>GET</td>
+      </tr>
+      <tr>
+        <td>View cart</td>
+        <td>/user/:user_id/cart</td>
+        <td>GET</td>
+      </tr>
+      <tr>
+        <td>Create a cart</td>
+        <td>/user/:user_id/cart</td>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <td>Add to cart</td>
+        <td>/user/:user_id/cart</td>
+        <td>PUT</td>
+      </tr>
+      <tr>
+        <td>Like product</td>
+        <td>/user/:user_id/likes/:product_id</td>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <td>View likes</td>
+        <td>/user/:user_id/likes</td>
+        <td>GET</td>
+      </tr>
+      <tr>
+        <td>Complete purchase</td>
+        <td>/user/:user_id/create-session</td>
+        <td>POST</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+Great, that’s a rough sketch of our API. We still have some more planning to do though. We need to figure out how to store all the data our app is generating. Our next task is to mockup our database. To keep things simple, a user can only have one cart and one list of likes at a time.
+
+```
+Table users {
+	id serial [pk]
+	email text [unique]
+	password text [not null]
+}
+
+Table carts {
+	id serial [pk]
+	user_id integer [ref: > users.id]
+}
+
+Table products {
+	id serial [pk]
+	stripe_prod_id text [unique]
+	description text
+	price numeric(28, 10) [not null]
+}
+
+Table images {
+	id serial [pk]
+	url string
+}
+
+// many-to-many relationship betweeen carts & products
+Ref cart_items: carts.id <> products.id
+Ref user_likes: users.id <> products.id
+// one-to-many relationship between products & images
+Ref product_images: product.id < images.id
+
+```
+
+**Explanation:**
+
+<CH.Section>
+  1. _`Table users{}`_: to keep it simple the only user data we’ll store is
+  their login credentials 2. _`Table carts{}`_: this table will act as a
+  permanent store for cart objects. we’ll also store them in
+  [Redis](https://redis.io/) for short-term access 3. _`Table products{}`_: the
+  products table will house much of the same information as our Stripe site but
+  will let us access the info without making potentially costly API calls 4.
+  _`Table images{}`_: the images table extracts product image URLs so that our
+  product app object will hold a list of images 5. _`Ref carts_products`_: this
+  creates a join table called ‘carts_products’ 6. _`Ref users_likes`_:
+  'user_likes' also becomes a join table 7. _`Ref product_images`_:
+  'product_images' also becomes a join table
+</CH.Section>
+
+That’s all the planning we’ll do for now. Time for the fun part!
+
+## Project Setup
+
+We'll be using Go (aka Golang) for the backend and React on the frontend. If you're not familiar with Go, there's an awesome introduction to the language called [A Tour of Go](https://tour.golang.org/welcome/1) on the site.
+
+To install Go, follow the [installation instructions](https://go.dev/doc/install) for your operating system. Once you've got it properly installed on your machine, we'll create a project directory for our app. If you plan to put your work on GitHub,
+then create `$GOPATH/src/github.com/your_gh_username/stripe-shopping-app`, otherwise `$GOPATH/src/stripe-shopping-app`.
+
+<aside>
+  ✨ Throughout this tutorial, shell code blocks will always start in the
+  project root. Non-shell blocks will contain a comment on the first line with
+  the file’s location relative to the project root.
+</aside>
+
+```bash
+cd
+mkdir -p $GOPATH/src/github.com/your_gh_username/stripe-shopping-app
+cd $GOPATH/src/github.com/your_gh_username/stripe-shopping-app
+git init
+touch .gitignore README.md
+```
+
+```sh .gitignore
+node_modules
+test
+**/.env
+tmp
+.idea
+.vscode
+```
+
+<CH.Section>
+  Next, we'll create the _`server/`_ directory, which is where our Go backend
+  will live. To get started, the first thing we need to do is initialize the
+  project. If the following lines are confusing, check out [this
+  article](https://blog.golang.org/using-go-modules) on Go modules.
+</CH.Section>
+
+```bash
+cd server
+go mod init github.com/your_username/stripe-shopping-app/server
+cd ..
+```
+
+<CH.Section>
+  Once you've initialized your project, you can create a file called
+  _`main.go`_. This is where we'll write the Go code for our project.
+</CH.Section>
+
+Now that we've go our Go project setup, let's get our React app up and running. If you don't already have [Node.js](https://nodejs.org/en/download/),
+[npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm), and [npx](https://www.npmjs.com/package/npx) on your machine, you'll need to download and install them before proceeding to the next step.
+
+```bash
+npx create-react-app client
+```
+
+![npx_create_react_app.jpg](/images/npx_create_react_app.jpg)
+
+Awesome, you're ready to go! Here's what our project structure looks like now.
+
+```
+stripe-shopping-app
+| .gitignore
+| .git
+|	README.md
+|
+|___client/
+|	|_  node_modules/
+|	|_  public/
+|	|_  src/
+|	|_  .gitignore
+|	|_  package.json
+|	|_  package-lock.json
+|	|_  README.md
+|
+|___server/
+|	|_  go.mod
+```
+
+## Create Go server
+
+The first thing we’ll do is write the basic structure of our Go server. This will let us test out our Go setup and make sure everything is configured properly.
+
+### Install Base Dependencies
+
+Let’s go ahead and install a few of the packages that we know we’ll need soon.
+
+<div className="overflow-x">
+  <table className="table-auto overflow-scroll w-full">
+    <thead>
+      <tr>
+        <th>Package</th>
+        <th>Usage</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>stripe-go</td>
+        <td>Stripe client for payment</td>
+        <td>
+          Be sure to go to the https://stripe.com/docs/api and grab the current
+          version for the Go client (for me its 73).
+        </td>
+      </tr>
+      <tr>
+        <td>godotenv </td>
+        <td>Use .env for environment variables</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>echo</td>
+        <td>Web framework</td>
+        <td>
+          I recommend scanning through the https://echo.labstack.com/guide/ if
+          you’re not already familiar with Echo. You should double check the
+          version number here as well.
+        </td>
+      </tr>
+      <tr>
+        <td>gorm</td>
+        <td>Database ORM</td>
+        <td>
+          You guessed it…read through the{" "}
+          <a href="https://gorm.io/docs">docs</a>
+        </td>
+      </tr>
+      <tr>
+        <td>validator</td>
+        <td>Struct type validation</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>golang-jwt</td>
+        <td>JWT utilities</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>bcrypt</td>
+        <td>Password hashing</td>
+        <td>
+          It’s not necessary to know exactly how this works, but checkout the
+          https://en.wikipedia.org/wiki/Bcrypt for a brief overview. The
+          https://pkg.go.dev/golang.org/x/crypto/bcrypt have more info
+          specifically related to the Go package we’re using.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+```bash
+cd server
+go get github.com/stripe/stripe-go/v<latest-version-number>
+go get github.com/joho/godotenv
+go get github.com/labstack/echo/v4
+go get gorm.io/gorm
+go get gorm.io/driver/postgres
+go get gopkg.in/validator.v2
+go get github.com/golang-jwt/jwt
+go get golang.org/x/crypto/bcrypt
+```
+
+<aside>
+  ✨ If you ever get errors related to imports or packages, try running `go mod
+  tidy`. This will make sure that your `go.mod` and dependencies are accurate.
+</aside>
+
+### Create `.env`
+
+We also need to setup the environment variables for our Go project. You can use [this site](https://www.grc.com/passwords.htm) to generate a JWT secret key.
+
+<aside>
+  ✨ Make sure to add .env to your .gitignore if you plan to upload your code to
+  GitHub or other repository host.
+</aside>
+
+In order to use the Stripe client, we need to provide API credentials attached to our seller accounts. If you don't already have an account, you can create one [here](https://dashboard.stripe.com/register). Once you've created an account or logged in, navigate to 'Developers' -> 'API Keys'. You should see a two keys for your test account (publishable and secret); copy them to your environment variables.
+
+```sh .env
+STRIPE_PUBLISHABLE_KEY=your_stripe_publish_key
+STRIPE_SECRET_KEY=your_stripe_secret_key
+
+API_PORT=8001
+
+DB_HOST=db
+DB_PORT=5432
+DB_NAME=stripe_shopping_app
+DB_USER=postgres
+DB_PASSWORD='your_db_password'
+
+JWT_SECRET_KEY=your_jwt_key
+```
+
+Great, we have all of our dependencies installed and our environment variables setup; let's start coding.
+
+### Create `/ping`
+
+<CH.Section>
+Before we get too far, let's do a quick sanity check to make sure everything is setup correctly. We'll create a route _`/ping`_ to test calling our API. To keep our code easy to read, we’re going to extract our router setup to its own package and then reference it in _`main`_.
+
+Our router file will have a single exported function _`Init()`_ that creates our API definition. We’re going to put all our routes in a group called _`api`_. For now we just have the ping route.
+
+</CH.Section>
+
+<aside>
+✨ In Go, functions names should be camel-cased. If the first word is capitalized, then the function is exported and available to use outside of the package.
+
+</aside>
+<CH.Section>
+<CH.Code lineNumbers={true}>
+```go server/router/router.go
+package router
+
+import (
+	"net/http"
+
+    "github.com/labstack/echo/v4"
+    "github.com/labstack/echo/v4/middleware"
+
+    "github.com/<your_gh_username>/stripe-shopping-app/server/utils"
+
+)
+
+func Init() \*echo.Echo {
+e := echo.New()
+
+    e.Use(middleware.Logger())
+    e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
+
+    api := e.Group("/api")
+    {
+    	api.GET("/ping", func(c echo.Context) error {
+    		return c.JSON(http.StatusOK, &utils.HttpResp{Message: "Ping received", Data: nil})
+    	})
+    }
+
+    return e
+
+}
+
+````
+</CH.Code>
+
+Each [route method](focus://20:22) takes a handler function that processes and responds to an HTTP request sent to that address. For this project our HTTP responses will always have two parts, a [message string](focus://21[49:72]) and [any applicable data](focus://21[75:83]). In the JSON response for our `/ping` route, we’re using a struct that defines that common response pattern.
+</CH.Section>
+
+### Add `utils` package
+<CH.Section>
+We’ll create a package called _`utils`_ to hold models and functions that are shared across the application. Here we can put our response struct and any other reusable functions or structs we need.
+
+<CH.Code lineNumbers={true}>
+```go server/utils/utils.go
+package utils
+
+import (
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+)
+
+func GetEnvVar(key string) string {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("error loading .env file")
+	}
+	return os.Getenv(key)
+}
+
+func PanicError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+type HttpResp struct {
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+````
+
+</CH.Code>
+
+In addition to our [HttpResp struct](focus://23:26), we also added [two helper functions](focus://10:21) that we’ll use throughout the project. _`GetEnvVar()`_ loads our _`.env`_ and provides the associated value for a given key. _`PanicError()`_ is simply a wrapper around a common error handling pattern.
+
+</CH.Section>
+
+### Start server
+
+<CH.Section>
+Now that we’ve gotten our router setup, we can create and start the server in _`main.go`_.
+
+<CH.Code lineNumbers={true}>
+```go server/main.go
+package main
+
+import (
+	"github.com/<your_gh_username>/stripe-shopping-app/server/router"
+	"github.com/<your_gh_username>/stripe-shopping-app/server/utils"
+)
+
+func main() {
+// Load server port
+PORT := utils.GetEnvVar("API_PORT")
+
+// Initialize echo
+e := router.Init()
+
+// Start the server
+e.Logger.Fatal(e.Start(":" + PORT))
+}
+
+````
+</CH.Code>
+
+**Explanation:**
+
+1. Every Go source file starts with a [package declaration](focus://1) _`package package_name`_. In this case, we're declaring this file as part of the _`main`_ package.
+2. Our _`main()`_ function is the entry point for our Go app. It [initializes our router](focus://13) and [starts the server](focus://16) on the port defined in _`server/.env`_.
+
+To run the project we'll use the command _`go run main.go`_.
+</CH.Section>
+
+```bash
+cd server
+go run main.go
+````
+
+![start_server.jpg](/images/start_server.jpg)
+
+### Test `/ping`
+
+<CH.Section>
+To query our API, I’m going to use [Postman](https://www.postman.com/downloads/), but you can also use cURL in the terminal, your browser, or any other tool. For convenience, you can download and import the Postman collection for this project [here](https://github.com/julianstephens/stripe-shopping-app/blob/378da90de82d3b77839f4476080de94996ba6f12/stripe_shopping_app.postman_collection.json). Our API is available at _`http://localhost:8001/api/`_.
+
+Let’s try making a GET request to our ping route (_`http://localhost:8001/api/ping`_). You should get a JSON response with status code 200 and the message “Received”.
+
+![I created an environment variable called ‘base’ and set it to `http://localhost:PORT/api` for simplicity*.*](/images/ping.jpg)
+
+I created an environment variable called ‘base’ and set it to _`http://localhost:PORT/api`_ for simplicity*.*
+
+</CH.Section>
+
+## Dockerize Dev Environment
+
+We’re going to use Docker to make it easy to setup and reproduce our development environment. To do this we’re going to create three containers: client (React frontend), server (Go REST API), and db (Postgres database). Once we have our Dockerfiles written, we can use [Compose](https://docs.docker.com/compose/) to mange and run the containers. Make sure you have [Docker](https://docs.docker.com/engine/install/) installed and have Compose V2 enabled before moving forward in the tutorial.
+
+For now, we’re only going to be working with server and db, so we’ll wait to add the configuration for the client container. To get started on the other two, let’s create a folder for our Dockerfiles.
+
+```bash
+mkdir .docker
+cd .docker
+touch server.dockerfile
+```
+
+### Server Container
+
+In our Dockerfile, we're essentially going to describe the process of building and running our Go app. We’re also going to use a tool called [air](https://github.com/cosmtrek/air) to give us live reloading so we don’t have to restart the container every time we make changes to our server.
+
+```docker .docker/server.dockerfile
+FROM golang:1.18-alpine as base
+
+# Load build arg
+ARG APP_HOME
+
+# Create development stage and set app location in container to /app
+FROM base as development
+WORKDIR $APP_HOME
+
+# Add bash shell and gcc toolkit
+RUN apk add --no-cache --upgrade bash build-base
+
+# Install air
+RUN go install github.com/cosmtrek/air@latest
+
+# Copy go.mod and install go dependencies
+COPY go.mod ./
+RUN go mod download
+
+# Copy source files
+COPY . .
+
+# Build and run binary with live reloading
+CMD ["air"]
+```
+
+<CH.Section>
+  To setup air, create a file called _`.air.toml`_ in your project root. Here,
+  we’ll define our project’s run configuration. See the air
+  [docs](https://github.com/cosmtrek/air/blob/master/air_example.toml) for
+  explanation.
+</CH.Section>
+
+```toml .air.toml
+# Working directory
+# . or absolute path, please note that the directories following must be under root.
+root = "./server"
+tmp_dir = "tmp"
+
+[build]
+# Just plain old shell command. You could use `make` as well.
+cmd = "cd server && go build -o ./tmp/main ."
+# Binary file yields from `cmd`.
+bin = "./server/tmp/main"
+# Don't save right away (ms)
+delay = 1000
+# Watch these filename extensions.
+include_ext = ["go"]
+# Ignore these filename extensions or directories.
+exclude_dir = ["tmp"]
+# Exclude specific regular expressions.
+exclude_regex = ["_test\\\\.go"]
+# Save logs to file
+log="air_errors.log"
+
+[misc]
+# Delete tmp directory on exit
+clean_on_exit = true
+```
+
+<CH.Section>
+Now that we’re using air to run our project, we need to make the path to our server’s _`.env`_ more specific so that air can find it from the project root.
+
+<CH.Code lineNumbers={true}>
+```go focus=11 server/utils/utils.go
+package utils
+
+import (
+	"log"
+	"os"
+
+    "github.com/joho/godotenv"
+
+)
+
+func GetEnvVar(key string) string {
+if err := godotenv.Load("./server/.env"); err != nil {
+log.Fatal("error loading .env file")
+}
+return os.Getenv(key)
+}
+
+func PanicError(err error) {
+if err != nil {
+panic(err)
+}
+}
+
+type HttpResp struct {
+Message string `json:"message"`
+Data interface{} `json:"data"`
+}
+
+````
+</CH.Code>
+</CH.Section>
+
+### Docker Compose
+
+<CH.Section>
+To actually manage and run our containers, we’re going to use Docker Compose; this requires a configuration file called _`docker-compose.yml`_ located at the project root.
+
+<CH.Code lineNumbers={true}>
+```yml docker-compose.yml
+services:
+  db:
+    image: postgres:14-alpine
+    container_name: db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - stripe_pgdata:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT_FORWARD}:${DB_PORT}
+    restart: always
+
+  server:
+    container_name: server
+    hostname: api
+    build:
+      context: ./server
+      dockerfile: ../.docker/server.dockerfile
+      target: ${APP_ENV}
+      args:
+        APP_HOME: ${APP_HOME}
+    ports:
+      - ${API_PORT_FORWARD}:${API_PORT}
+      - ${API_DEBUG_PORT_FORWARD}:${API_DEBUG_PORT}
+    volumes:
+      - .:${APP_HOME}
+    links:
+      - db
+
+volumes:
+  stripe_pgdata:
+    external: true
+````
+
+</CH.Code>
+
+**Explanation:**
+
+1. _`db`_: The first service (aka container) is called _`db`_ and it’s based on the _`postgres:14-alpine`_ image. Notice that we’ve [mounted a volume](focus://8:9) called _`stripe_pgdata`_ to the container in order to persist database data after container shutdown.
+2. _`server`_: This container is built from the definition we provided in _`.docker/server.dockerfile`_. We also [opened a public port](focus://24[29:40]) _`API_PORT`_ that our API will run on and [forwarded that port](focus://24[9:27]) to _`API_PORT_FORWARD`_ to avoid conflicts. From inside a container, we’ll be able to reach this service at _`http://server:APP_PORT`_; outside the container (e.g. Postman or browser) it can be reached at _`http://localhost:APP_PORT_FORWARD`_. We also [mounted the project directory](focus://26:27) to a volume mapped to _`APP_HOME`_, which is the location of our project inside the container. This will add our project files to the container and sync changes between our local files and the files inside the container.
+3. _`volumes`_: The [volumes section](focus://31:33) tells Compose that the ‘stripe*pgdata’ volume we attached to *`db`\_ was created externally and shouldn’t be recreated when Compose builds or tears down containers.
+   </CH.Section>
+
+Before we can build our images and start the containers, we need to define the environment variables and create the volume for the database. To create the volume, you can use the Docker CLI.
+
+```sh
+docker volume create stripe_pgdata
+```
+
+<CH.Section>
+  For our environment variables, we’ll create a _`.env`_ file at our project
+  root.
+</CH.Section>
+
+```sh .env
+APP_HOME=/go/src/github.com/<your_gh_username>/stripe-shopping-app
+APP_ENV=development
+
+DB_NAME=stripe_shopping_app
+DB_PASSWORD='<your_db_password>'
+DB_PORT_FORWARD=3502
+DB_PORT=5432
+
+API_PORT_FORWARD=3500
+API_PORT=8001
+
+API_DEBUG_PORT_FORWARD=2345
+API_DEBUG_PORT=2345
+```
+
+### Run Dev Environment
+
+[VSCode](https://code.visualstudio.com/) and [Goland](https://www.jetbrains.com/go/) both have GUI tools for interacting with Docker that are extremely useful. However, for generalization, I’m going to use the CLI.
+
+```bash
+docker compose up -d --build
+```
+
+This will build the Docker images and start the containers in detached mode (i.e. in the background). If you open up the Docker Desktop app, you should see your containers running. Clicking on the container name will allow you to view the service logs, configuration, and stats. Now, if you go back to Postman and run the ping request again you should still receive the 200 response with the message “Received”. **Be sure to update the port to the forwarded port before running any requests.**
+
+![docker_up_server_db.jpg](/images/docker_up_server_db.jpg)
+
+### Test Dockerized `/ping`
+
+<CH.Section>
+You can test your _`/ping`_ route exactly the same way that you did the first time. There’s just one small change you need to make. Previously, we used the queried our API at _`[http://localhost:8001/api/ping](http://localhost:8001/api/ping)`_ because our server was running on the host localhost and port 8001. Now, our server is still accessible from localhost, but we’re forwarding the port to 3500 from the Docker container to avoid any potential conflicts. This means that from now on, when outside of a Docker container, we’ll find our API at _`http://localhost:3500/api`_.
+
+---
+
+That concludes part one of the tutorial! By this point you should:
+
+1. Have a functioning Go REST API with a working route at _`/api/ping`_.
+2. Setup a React project in _`client/`_ using create-react-app.
+3. Dockerized your Go server, React frontend, and Postgres database.
+
+And here’s what your project file tree should look like.
+
+```
+stripe-shopping-app
+|___.docker/
+|	|_  server.dockerfile
+| .gitignore
+| .git
+| .air.toml
+| .env
+|	README.md
+| docker-compose.yml
+|
+|___client/
+|	|_  node_modules/
+|	|_  public/
+|	|_  src/
+|	|_  .gitignore
+|	|_  package.json
+|	|_  package-lock.json
+|	|_  README.md
+|
+|___server/
+|	|___router/
+|	| |_  router.go
+|	|___utils/
+|	| |_  utils.go
+|	|_  go.mod
+|	|_  go.sum
+|	|_  .env
+|	|_  main.go
+```
+
+In the next part of the tutorial, we’ll finish the backend implementation for our web app.
+
+</CH.Section>
