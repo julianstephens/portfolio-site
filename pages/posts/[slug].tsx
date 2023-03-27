@@ -1,18 +1,18 @@
+import type { Post } from "@/types";
 import { getAllPosts, getSinglePost } from "@/utils/mdx";
-import type { Post } from "@/utils/types";
 import { getMDXComponent } from "mdx-bundler/client";
 import moment from "moment";
 import { GetStaticProps } from "next";
 import Link from "next/link";
 import { useMemo } from "react";
-import { HiArrowSmallLeft } from "react-icons/hi2";
+import { HiArrowSmallLeft, HiArrowUp } from "react-icons/hi2";
 
 const Post = ({ code, frontmatter }: Post) => {
   const Component = useMemo(() => getMDXComponent(code), [code]);
 
   return (
     <main className="page">
-      <div className="flex items-center justify-between mb-4">
+      <div id="#top" className="flex items-center justify-between mb-4">
         <Link href={"/"}>
           <span className="md:hidden">
             <HiArrowSmallLeft size={20} />
@@ -27,6 +27,12 @@ const Post = ({ code, frontmatter }: Post) => {
       </div>
       <h1 className="text-center">{frontmatter.title}</h1>
       <Component />
+      <Link
+        href="#top"
+        className="hidden fixed right-12 bottom-12 p-2 rounded-full border border-3 border-neutral-900 md:block"
+      >
+        <HiArrowUp />
+      </Link>
     </main>
   );
 };

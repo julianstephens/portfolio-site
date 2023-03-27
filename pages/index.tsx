@@ -1,7 +1,7 @@
 import AppFooter from "@/components/Footer";
 import AppHead from "@/components/Head";
+import type { Post, Props } from "@/types";
 import { getAllPosts } from "@/utils/mdx";
-import type { Post, Props } from "@/utils/types";
 import moment from "moment";
 import Link from "next/link";
 import { HiDocumentArrowDown, HiEnvelope } from "react-icons/hi2";
@@ -36,8 +36,9 @@ const Home = ({ posts }: Props) => {
           </span>{" "}
           that{" "}
           <span className="font-bold underline decoration-2 decoration-sky-800">
-            add value to people’s lives
-          </span>
+            add value to people&apos;s lives.
+          </span>{" "}
+          currently at NBCUniversal
         </p>
         <p className="mt-0 text-center">---</p>
         <div className="flex justify-center my-2 gap-4">
@@ -99,8 +100,8 @@ const Home = ({ posts }: Props) => {
           <Tooltip id="li" />
         </div>
         <p className="mt-0 text-center">---</p>
-        <div id="recentProjects" className="mt-5">
-          <h2 className="no-underline">recent projects</h2>
+        <div id="recentProjects" className="mt-3">
+          <h2 className="mt-0 no-underline">recent projects</h2>
           <ul>
             {posts.map((post: Post, idx: number) => {
               return (

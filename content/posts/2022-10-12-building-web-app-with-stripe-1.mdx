@@ -47,8 +47,8 @@ I’ve been burned by jumping into a new project without a plan enough times to 
 
 That seems like a good start to get the basic structure of an e-commerce store in place. From here, we can map out what API routes we’ll need for each item.
 
-<div className="overflow-x">
-  <table className="table-auto overflow-scroll w-full">
+<div className="overflow-x-auto">
+  <table className="w-full">
     <thead>
       <tr>
         <th>Action</th>
@@ -244,8 +244,8 @@ The first thing we’ll do is write the basic structure of our Go server. This w
 
 Let’s go ahead and install a few of the packages that we know we’ll need soon.
 
-<div className="overflow-x">
-  <table className="table-auto overflow-scroll w-full">
+<div className="overflow-x-auto">
+  <table className="w-full">
     <thead>
       <tr>
         <th>Package</th>
@@ -581,7 +581,7 @@ clean_on_exit = true
 Now that we’re using air to run our project, we need to make the path to our server’s _`.env`_ more specific so that air can find it from the project root.
 
 <CH.Code lineNumbers={true}>
-```go focus=11 server/utils/utils.go
+```go focus=12 server/utils/utils.go
 package utils
 
 import (
