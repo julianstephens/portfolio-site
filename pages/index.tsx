@@ -1,7 +1,7 @@
 import AppFooter from "@/components/Footer";
 import AppHead from "@/components/Head";
-import type { Post, Props } from "@/types";
 import { getAllPosts } from "@/utils/mdx";
+import { MDXPost, Props } from "@/utils/types";
 import moment from "moment";
 import Link from "next/link";
 import { HiDocumentArrowDown, HiEnvelope } from "react-icons/hi2";
@@ -11,7 +11,7 @@ import { Tooltip } from "react-tooltip";
 const Home = ({ posts }: Props) => {
   posts = posts
     .sort(
-      (a, b) =>
+      (a: MDXPost, b: MDXPost) =>
         moment(a.frontmatter.date).unix() - moment(b.frontmatter.date).unix(),
     )
     .reverse();
@@ -103,7 +103,7 @@ const Home = ({ posts }: Props) => {
         <div id="recentProjects" className="mt-3">
           <h2 className="mt-0 no-underline">recent projects</h2>
           <ul>
-            {posts.map((post: Post, idx: number) => {
+            {posts.map((post: any, idx: number) => {
               return (
                 <li key={idx} className="lg:text-lg xl:text-xl">
                   <Link href={`posts/${post.slug}`}>
@@ -121,7 +121,7 @@ const Home = ({ posts }: Props) => {
 };
 
 export const getStaticProps = async () => {
-  const posts = getAllPosts();
+  const posts = await getAllPosts();
 
   return {
     props: { posts },

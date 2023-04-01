@@ -10,6 +10,7 @@ specifiers:
   '@types/react-dom': ^18.0.11
   '@typescript-eslint/parser': ^5.56.0
   autoprefixer: ^10.4.14
+  edgedb: ^1.1.0
   esbuild: ^0.17.14
   eslint: ^8.36.0
   eslint-config-next: ^13.2.4
@@ -30,11 +31,13 @@ specifiers:
   tailwindcss: ^3.2.7
   typescript: ^5.0.2
   webpack: ^5.76.3
+  zod: ^3.21.4
 
 dependencies:
   '@code-hike/mdx': 0.8.1_react@18.2.0
   '@mdx-js/loader': 2.3.0_webpack@5.76.3
   '@next/mdx': 13.2.4_@mdx-js+loader@2.3.0
+  edgedb: 1.1.0
   esbuild: 0.17.14
   gray-matter: 4.0.3
   mdx-bundler: 9.2.1_esbuild@0.17.14
@@ -46,6 +49,7 @@ dependencies:
   react-tooltip: 5.10.1_biqbaboplfbrettd7655fr4n2y
   rehype-highlight: 6.0.0
   shiki: 0.14.1
+  zod: 3.21.4
 
 devDependencies:
   '@commitlint/config-conventional': 17.4.4
@@ -1455,6 +1459,12 @@ packages:
   /eastasianwidth/0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
     dev: true
+
+  /edgedb/1.1.0:
+    resolution: {integrity: sha512-pRDJyHWHntAw1cJyOlkoNeWCHTUPU1tWlQpcEPGyHEBlfazYJHUpTShkmJ23oopjVTmlmGiSrfcsB74Tr5qo0w==}
+    engines: {node: '>= 12.0.0'}
+    hasBin: true
+    dev: false
 
   /electron-to-chromium/1.4.340:
     resolution: {integrity: sha512-zx8hqumOqltKsv/MF50yvdAlPF9S/4PXbyfzJS6ZGhbddGkRegdwImmfSVqCkEziYzrIGZ/TlrzBND4FysfkDg==}
@@ -4675,6 +4685,10 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod/3.21.4:
+    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: false
 
   /zwitch/2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}

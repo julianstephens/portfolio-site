@@ -5,6 +5,7 @@ import { bundleMDX } from "mdx-bundler";
 import path from "path";
 
 import theme from "shiki/themes/github-dark-dimmed.json";
+import { Post } from "./types";
 
 export const ROOT = process.cwd();
 export const POSTS_PATH = path.join(process.cwd(), "content/posts");
@@ -58,8 +59,10 @@ const getCompiledMDX = async (source: string) => {
 };
 
 export const getSinglePost = async (slug: string) => {
-  const source = getFileContent(`${slug}.mdx`);
-  const { code, frontmatter } = await getCompiledMDX(source);
+  const res = await fetch(`http://localhost:3000/api/posts/${slug}`);
+  const post = await res.json();
+
+  const { code, frontmatter } = await getCompiledMDX(post.content);
 
   return {
     frontmatter,
@@ -67,18 +70,15 @@ export const getSinglePost = async (slug: string) => {
   };
 };
 
-export const getAllPosts = () => {
-  return fs
-    .readdirSync(POSTS_PATH)
-    .filter((path) => /\.mdx?$/.test(path))
-    .map((fileName) => {
-      const source = getFileContent(fileName);
-      const slug = fileName.replace(/\.mdx?$/, "");
-      const { data } = matter(source);
+export const getAllPosts = async () => {
+  const res = await fetch(`http://localhost:3000/api/posts`);
+  const posts = await res.json();
+  return posts.map((p: Post) => {
+    const { data } = matter(p.content);
 
-      return {
-        frontmatter: data,
-        slug: slug,
-      };
-    });
+    return {
+      frontmatter: data,
+      slug: p.slug,
+    };
+  });
 };

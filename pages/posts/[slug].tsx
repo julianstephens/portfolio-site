@@ -1,13 +1,13 @@
-import type { Post } from "@/types";
-import { getAllPosts, getSinglePost } from "@/utils/mdx";
+import { getSinglePost } from "@/utils/mdx";
+import { PostPreview } from "@/utils/types";
 import { getMDXComponent } from "mdx-bundler/client";
 import moment from "moment";
-import { GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 import { useMemo } from "react";
 import { HiArrowSmallLeft, HiArrowUp } from "react-icons/hi2";
 
-const Post = ({ code, frontmatter }: Post) => {
+const Post = ({ code, frontmatter }: { code: string; frontmatter: any }) => {
   const Component = useMemo(() => getMDXComponent(code), [code]);
 
   return (
@@ -37,15 +37,20 @@ const Post = ({ code, frontmatter }: Post) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }: any) => {
-  const post = await getSinglePost(params.slug);
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const post = await getSinglePost(params?.slug as string);
   return {
     props: { ...post },
   };
 };
 
-export const getStaticPaths = async () => {
-  const paths = getAllPosts().map(({ slug }) => ({ params: { slug } }));
+export const getStaticPaths: GetStaticPaths = async () => {
+  const res = await fetch("http://localhost:3000/api/posts?preview=true");
+  const posts = await res.json();
+  const paths = posts.map(({ slug }: PostPreview) => ({
+    params: { slug },
+  }));
+
   return {
     paths,
     fallback: false,
