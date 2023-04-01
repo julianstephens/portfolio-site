@@ -1,5 +1,5 @@
 import { getSinglePost } from "@/utils/mdx";
-import { PostPreview } from "@/utils/types";
+import { API_URL, PostPreview } from "@/utils/types";
 import { getMDXComponent } from "mdx-bundler/client";
 import moment from "moment";
 import { GetStaticPaths, GetStaticProps } from "next";
@@ -45,7 +45,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch("http://localhost:3000/api/posts?preview=true");
+  const res = await fetch(`${API_URL}/posts?preview=true`);
   const posts = await res.json();
   const paths = posts.map(({ slug }: PostPreview) => ({
     params: { slug },

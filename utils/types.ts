@@ -35,3 +35,5 @@ export type MDXPost = {
 export type Props = {
   posts: MDXPost[];
 };
+
+export const { NEXT_API_URL: API_URL } = process.env;

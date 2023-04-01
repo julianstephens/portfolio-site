@@ -5,7 +5,7 @@ import { bundleMDX } from "mdx-bundler";
 import path from "path";
 
 import theme from "shiki/themes/github-dark-dimmed.json";
-import { Post } from "./types";
+import { API_URL, Post } from "./types";
 
 export const ROOT = process.cwd();
 export const POSTS_PATH = path.join(process.cwd(), "content/posts");
@@ -59,7 +59,7 @@ const getCompiledMDX = async (source: string) => {
 };
 
 export const getSinglePost = async (slug: string) => {
-  const res = await fetch(`http://localhost:3000/api/posts/${slug}`);
+  const res = await fetch(`${API_URL}/${slug}`);
   const post = await res.json();
 
   const { code, frontmatter } = await getCompiledMDX(post.content);
@@ -71,7 +71,7 @@ export const getSinglePost = async (slug: string) => {
 };
 
 export const getAllPosts = async () => {
-  const res = await fetch(`http://localhost:3000/api/posts`);
+  const res = await fetch(`${API_URL}/posts`);
   const posts = await res.json();
   return posts.map((p: Post) => {
     const { data } = matter(p.content);
