@@ -1,13 +1,13 @@
-import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import AstroPWA from "@vite-pwa/astro";
+import { defineConfig } from "astro/config";
 
 import { Portfolio } from "./src/scripts/vite";
 
-import remarkGfm from "remark-gfm";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import remarkGfm from "remark-gfm";
 
 // https://astro.build/config
 export default defineConfig({
