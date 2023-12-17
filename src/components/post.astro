@@ -1,0 +1,45 @@
+---
+import Date from "@components/post/date.astro";
+import { page as pageConfig, site } from "@src/config";
+
+const { post, preview } = Astro.props as {
+  post: Post;
+  preview?: boolean;
+};
+const { frontmatter, Content } = post;
+const date = frontmatter.published ?? frontmatter.created ?? "";
+---
+
+<article itemscope itemtype="https://schema.org/BlogPosting" itemprop="blogPost" class="h-entry">
+  <a style="display: none" class="u-url u-uid" href={site.url + frontmatter.path}>{frontmatter.path}</a>
+  {
+    preview && (
+      <>
+        <h4 itemprop="name headline" class="!text-4xl !mt-0 !mb-4" style="border: 0;">
+          <a itemprop="url" class="hover:!underline cursor-pointer u-url p-name" href={frontmatter.path}>
+            {frontmatter.title}
+          </a>
+        </h4>
+        {frontmatter.summary && <p class="p-summary">{frontmatter.summary}</p>}
+      </>
+    )
+  }
+
+  <>
+    {
+      (!preview || pageConfig.preview?.content) && (
+        <div class="prose e-content">
+          <Content />
+          <div style="margin-top:4rem;display: flex;flex-direction: row;justify-content: space-between;width: 100%;">
+            <a itemprop="url" href={frontmatter.repoUrl}>
+              {frontmatter.repoUrl}
+            </a>
+            <div>
+              Published on <Date date={frontmatter.published} />
+            </div>
+          </div>
+        </div>
+      )
+    }
+  </>
+</article>

@@ -1,0 +1,64 @@
+---
+// gumori core stylesheets
+import "@src/styles/gumori.css";
+// gumori site config
+import { site } from "@src/config";
+// pwa info
+import { pwaInfo } from "virtual:pwa-info";
+
+const { page, post } = Astro.props as {
+  page: Page;
+  post: Post;
+};
+
+const title = page
+  ? page.url.current === ""
+    ? site.title
+    : `${page.url.current} - ${site.title}`
+  : `${post.frontmatter.title ?? post.frontmatter.path} - ${site.title}`;
+const description = page ? site.description : post.frontmatter.summary;
+const permalink = site.url + (page ? page.url.current : post.frontmatter.path);
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="generator" content="gh:importantimport/gumori" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={page ? "website" : "article"} />
+<meta property="og:url" content={permalink} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+
+<!-- PWA -->
+<script src="/src/scripts/pwa.ts"></script>
+{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+
+<!-- Photo -->
+{
+  post?.frontmatter?.image && (
+    <>
+      <meta property="og:image" content={post.frontmatter.image} />
+      <meta property="twitter:card" content="summary_large_image" />
+    </>
+  )
+}
+
+<!-- Stylesheets -->
+{site.stylesheets?.map((href) => <link rel="stylesheet" href={href} />)}
+<!-- <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" media="screen" />
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/sakura.css/css/sakura-dark.css"
+  media="screen and (prefers-color-scheme: dark)"
+/> -->
+
+<!-- Scripts -->
+{site.scripts?.map(({ src, type, async, defer }) => <script src={src} type={type} async={async} defer={defer} />)}

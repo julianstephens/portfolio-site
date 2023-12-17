@@ -1,0 +1,84 @@
+---
+import Footer from "@components/footer.astro";
+import Head from "@components/head.astro";
+import Page from "@components/page.astro";
+import Post from "@components/post.astro";
+import { page as pageConfig, site } from "@src/config";
+import { resolve } from "path";
+
+export const getStaticPaths = async ({ paginate }) => {
+  const posts = await Astro.glob("../../portfolio/**/*.md");
+  const pages = paginate(
+    posts
+      .filter((post) => !post.frontmatter.flags?.includes("unlisted"))
+      .sort(
+        (a, b) =>
+          Date.parse(b.frontmatter.published ?? b.frontmatter.created) -
+          Date.parse(a.frontmatter.published ?? a.frontmatter.created),
+      ),
+    { pageSize: pageConfig.pageSize ?? 5 },
+  );
+
+  // posts.forEach(post => console.log(post.file))
+
+  return [
+    ...pages.map(({ params, props }) => ({
+      params,
+      props: {
+        page: {
+          ...props.page,
+          data: props.page.data.map((post: Post) => ({
+            ...post,
+            frontmatter: {
+              ...post.frontmatter,
+              slug: post.file.replace(resolve("portfolio"), ""),
+              path: post.file
+                .replace(resolve("portfolio"), "")
+                .replace(/(.+?)(?:\/index\.md|\.md)/, "$1")
+                .slice(1),
+            },
+          })),
+        },
+      },
+    })),
+    ...posts.map((post) => ({
+      params: {
+        page: post.file
+          .replace(resolve("portfolio"), "")
+          .replace(/(.+?)(?:\/index\.md|\.md)/, "$1")
+          .slice(1),
+      },
+      props: {
+        post: {
+          ...post,
+          frontmatter: {
+            ...post.frontmatter,
+            slug: post.file.replace(/.+?\/posts(.+)/, "$1"),
+            path: post.file.replace(/.+?\/posts(.+)(index\.md|\.md)/, "$1").slice(1),
+          },
+        },
+      },
+    })),
+  ];
+};
+
+const { page, post } = Astro.props as {
+  page: Page;
+  post: Post;
+};
+
+import.meta.env.DEV && console.log(page ?? post);
+---
+
+<html lang={site.lang ?? "en"}>
+  <head prefix="og: https://ogp.me/ns#">
+    <Head {page} {post} />
+  </head>
+
+  <body class={page ? "h-feed" : ""} itemscope itemtype="https://schema.org/WebPage">
+    <main itemprop="mainEntityOfPage" itemscope itemtype={page ? "https://schema.org/Blog" : ""}>
+      {post ? <Post post={post} /> : <Page page={page} />}
+      <Footer />
+    </main>
+  </body>
+</html>

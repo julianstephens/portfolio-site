@@ -1,0 +1,35 @@
+{
+  "name": "portfolio-site",
+  "type": "module",
+  "version": "0.0.1",
+  "author": "Julian Stephens",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "astro check",
+    "format": "prettier -w --plugin-search-dir=. .",
+    "gh": "dotenv -- tsx ./src/scripts/gh.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@vite-pwa/astro": "^0.0.1",
+    "astro": "^2.0.4",
+    "dotenv-cli": "^7.3.0",
+    "fff-flavored-frontmatter": "~0.5.0",
+    "prettier": "^2.8.3",
+    "prettier-plugin-astro": "^0.8.0",
+    "rehype-autolink-headings": "^6.1.1",
+    "rehype-pretty-code": "^0.9.2",
+    "rehype-slug": "^5.1.0",
+    "remark-gfm": "^3.0.1",
+    "shiki": "^0.14.0",
+    "tsx": "^4.6.2",
+    "vite-plugin-pwa": "^0.14.1"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^2.1.0",
+    "@astrojs/sitemap": "^1.0.1",
+    "octokit": "^3.1.2"
+  }
+}
