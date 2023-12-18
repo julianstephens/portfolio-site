@@ -1,0 +1,9 @@
+@import "./code.css";
+
+html {
+  scroll-behavior: smooth;
+}
+
+td {
+  min-width: 5rem;
+}
