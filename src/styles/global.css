@@ -4,6 +4,7 @@ html {
   scroll-behavior: smooth;
 }
 
-td {
+td,
+th {
   min-width: 5rem;
 }
