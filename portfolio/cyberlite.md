@@ -2,7 +2,7 @@
 title: Cyberlite
 published: 2023-12-18
 path: /cyberlite
-repoUrl: https://api.github.com/repos/julianstephens/cyberlite
+repoUrl: https://github.com/julianstephens/cyberlite
 summary: Typescript sqlite clone
 ---
 
