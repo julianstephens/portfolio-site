@@ -1,9 +1,9 @@
 ---
 title: License Server and Manager
-published: 2023-12-17
+published: 2023-12-18
 path: /license-server
 repoUrl: https://github.com/julianstephens/license-server
-summary: A software license server and CLI management tool
+summary: Server and CLI for managing software licenses.
 ---
 
 # License Server and Manager
@@ -28,3 +28,7 @@ The CLI can also be used to manage licenses, additionally, it provides functiona
 2. Metadata json is hashed and signed with the product/version private key
 3. Signature is AES encrypted and base58 encoded for distribution as the product key
 4. License is stored in db as `{"key": encrypted signature, "attributes": license metadata}`
+
+### API Docs
+
+[https://julianstephens.github.io/license-server/v3/](https://julianstephens.github.io/license-server/v3/)

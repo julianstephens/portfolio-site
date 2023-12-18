@@ -9,6 +9,7 @@ export type Response = {
   repoName: string;
   downloadUrl: string;
   content: string;
+  description: string;
 };
 
 const ENV = import.meta.env ?? process.env;
@@ -51,10 +52,12 @@ const getSiteData = async () => {
   for (const r of repos.data) {
     const f = await getSiteFile(r.name);
     if (f) {
+      console.log(f);
       const res: Response = {
         repoName: r.name,
         downloadUrl: f["download_url"],
         content: f["content"],
+        description: r["description"],
       };
       siteFiles.push(res);
     }
@@ -74,6 +77,7 @@ const saveSiteFiles = async () => {
       published: new Date().toISOString().slice(0, 10),
       path: `/${f.repoName}`,
       repoUrl: `https://github.com/${ENV.GH_USER}/${f.repoName}`,
+      summary: f["description"],
     };
 
     let fmStr = "---\n";
@@ -86,7 +90,7 @@ const saveSiteFiles = async () => {
     const saveLoc = path.join(outDir, f.repoName + ".md");
 
     try {
-      writeFileSync(saveLoc, contentWithFm, { flag: "ax" });
+      writeFileSync(saveLoc, contentWithFm, { flag: "w" });
     } catch {
       continue;
     }

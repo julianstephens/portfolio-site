@@ -6,11 +6,13 @@ on:
   push:
     branches: [ main ]
   # Allows you to run this workflow manually from the Actions tab on GitHub.
+  schedule:
+    - cron: "0 0 * * 0"
   workflow_dispatch:
 
 # Allow this job to clone the repo and create a deployment
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -50,6 +52,14 @@ jobs:
           file_name: .env
           fail_on_empty: true
           sort_keys: false
+      - name: Update site data
+        run: pnpm gh
+      - name: Commit changes
+        run: |
+          git config --global user.name ${{ vars.GH_USER }}
+          git config --global user.email ${{ vars.GH_USER }}@users.noreply.github.com
+          git commit -am "ci: updated site data"
+          git push
       - name: Build project
         run: pnpm build
       - name: Sync files

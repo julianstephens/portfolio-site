@@ -1,8 +1,9 @@
 ---
 title: Email Notification Service
-published: 2023-12-17
+published: 2023-12-18
 path: /email_notification_service
 repoUrl: https://github.com/julianstephens/email_notification_service
+summary: null
 ---
 
 # Email Notification Service
