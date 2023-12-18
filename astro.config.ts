@@ -1,5 +1,3 @@
-import sitemap from "@astrojs/sitemap";
-import AstroPWA from "@vite-pwa/astro";
 import { defineConfig } from "astro/config";
 
 import { Portfolio } from "./src/scripts/vite";
@@ -12,7 +10,6 @@ import remarkGfm from "remark-gfm";
 // https://astro.build/config
 export default defineConfig({
   site: "https://julianstephens.net",
-  integrations: [sitemap(), AstroPWA()],
   markdown: {
     syntaxHighlight: false,
     remarkPlugins: [remarkGfm],

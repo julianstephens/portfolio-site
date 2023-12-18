@@ -13,7 +13,6 @@
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
-    "@vite-pwa/astro": "^0.0.1",
     "astro": "^2.0.4",
     "dotenv-cli": "^7.3.0",
     "fff-flavored-frontmatter": "~0.5.0",
@@ -24,8 +23,7 @@
     "rehype-slug": "^5.1.0",
     "remark-gfm": "^3.0.1",
     "shiki": "^0.14.0",
-    "tsx": "^4.6.2",
-    "vite-plugin-pwa": "^0.14.1"
+    "tsx": "^4.6.2"
   },
   "dependencies": {
     "@astrojs/rss": "^2.1.0",
