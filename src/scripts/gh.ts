@@ -55,7 +55,7 @@ const getSiteData = async () => {
     if (f) {
       const res: Response = {
         repoName: r.name.replaceAll("_", "-"),
-        repoUrl: r.url,
+        repoUrl: r.html_url,
         downloadUrl: f["download_url"],
         content: f["content"],
         description: r.description,
