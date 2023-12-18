@@ -7,6 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export type Response = {
   repoName: string;
+  repoUrl: string;
   downloadUrl: string;
   content: string;
   description: string;
@@ -54,9 +55,10 @@ const getSiteData = async () => {
     if (f) {
       const res: Response = {
         repoName: r.name.replaceAll("_", "-"),
+        repoUrl: r.url,
         downloadUrl: f["download_url"],
         content: f["content"],
-        description: r["description"],
+        description: r.description,
       };
       siteFiles.push(res);
     }
@@ -75,7 +77,7 @@ const saveSiteFiles = async () => {
       title,
       published: new Date().toISOString().slice(0, 10),
       path: `/${f.repoName}`,
-      repoUrl: `https://github.com/${ENV.GH_USER}/${f.repoName}`,
+      repoUrl: f.repoUrl,
       summary: f["description"],
     };
 
