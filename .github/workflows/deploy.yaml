@@ -55,11 +55,9 @@ jobs:
       - name: Update site data
         run: pnpm gh
       - name: Commit changes
-        run: |
-          git config --global user.name ${{ vars.GH_USER }}
-          git config --global user.email ${{ vars.GH_USER }}@users.noreply.github.com
-          git commit -am "ci: updated site data"
-          git push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "ci: updated site data"
       - name: Build project
         run: pnpm build
       - name: Sync files

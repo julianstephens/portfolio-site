@@ -52,7 +52,6 @@ const getSiteData = async () => {
   for (const r of repos.data) {
     const f = await getSiteFile(r.name);
     if (f) {
-      console.log(f);
       const res: Response = {
         repoName: r.name,
         downloadUrl: f["download_url"],
