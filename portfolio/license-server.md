@@ -1,8 +1,8 @@
 ---
 title: License Server and Manager
-published: 2023-12-18
+published: 2023-12-17
 path: /license-server
-repoUrl: https://api.github.com/repos/julianstephens/license-server
+repoUrl: https://github.com/julianstephens/license-server
 summary: Server and CLI for managing software licenses.
 ---
 

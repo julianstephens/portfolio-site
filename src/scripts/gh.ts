@@ -1,4 +1,5 @@
-import { writeFileSync } from "fs";
+import { readFile, writeFileSync } from "fs";
+import * as matter from "gray-matter";
 import { Octokit } from "octokit";
 import * as path from "path";
 import { fileURLToPath } from "url";
@@ -18,6 +19,16 @@ const ENV = import.meta.env ?? process.env;
 const gh = new Octokit({
   auth: ENV.GH_PAT,
 });
+
+const toFMStr = (frontmatter: Frontmatter) => {
+  let fmStr = "---\n";
+  Object.entries(frontmatter).forEach(([k, v]) => {
+    fmStr += `${k}: ${v}\n`;
+  });
+  fmStr += "---\n\n";
+
+  return fmStr;
+};
 
 const getSiteFile = async (repo: string) => {
   try {
@@ -81,21 +92,22 @@ const saveSiteFiles = async () => {
       summary: f["description"],
     };
 
-    let fmStr = "---\n";
-    Object.entries(frontmatter).forEach(([k, v]) => {
-      fmStr += `${k}: ${v}\n`;
-    });
-    fmStr += "---\n\n";
-    const contentWithFm = fmStr + content;
-
     const saveLoc = path.join(outDir, f.repoName + ".md");
 
-    try {
+    // update or create new post with frontmatter & post content
+    // if existing, prefer saved published date
+    readFile(saveLoc, (err, contents) => {
+      if (!err) {
+        // @ts-ignore
+        const { data } = matter.default(contents.toString());
+        frontmatter.published = new Date((data as Frontmatter).published).toISOString().slice(0, 10);
+      }
+
+      const contentWithFm = toFMStr(frontmatter) + content;
       writeFileSync(saveLoc, contentWithFm, { flag: "w" });
-    } catch {
-      continue;
-    }
+    });
   }
+  console.log("files updated: ", files.length);
 };
 
 (async () => {

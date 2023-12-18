@@ -30,7 +30,7 @@ export const site: Config.Site = {
 };
 
 export const page: Config.Page = {
-  pageSize: 5,
+  pageSize: 15,
 };
 
 export const date: Config.Date = {

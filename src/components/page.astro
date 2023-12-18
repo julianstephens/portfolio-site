@@ -1,10 +1,12 @@
 ---
-import Post from '@components/post.astro'
-import Pagination from '@components/pagination.astro'
+import Post from "@components/post.astro";
+import Pagination from "@components/pagination.astro";
 
-const { page } = Astro.props as { page: Page }
-const { url } = page
+const { page } = Astro.props as { page: Page };
+const { url } = page;
+console.log("next url", url.next);
+console.log("prev url", url.prev);
 ---
 
-{page.data.map(post => <Post post={post} preview={true} />)}
-{(url.prev || url.next) && <Pagination url={url} />}
+{page.data.map((post) => <Post post={post} preview={true} />)}
+{(url.prev != null || url.next != null) && <Pagination url={url} />}
