@@ -53,7 +53,7 @@ const getSiteData = async () => {
     const f = await getSiteFile(r.name);
     if (f) {
       const res: Response = {
-        repoName: r.name,
+        repoName: r.name.replaceAll("_", "-"),
         downloadUrl: f["download_url"],
         content: f["content"],
         description: r["description"],
