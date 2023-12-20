@@ -16,6 +16,16 @@ const description = page ? site.description : post.frontmatter.summary;
 const permalink = site.url + (page ? page.url.current : post.frontmatter.path);
 ---
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F4V9JK9ZR4"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+
+  gtag("config", "G-F4V9JK9ZR4");
+</script>
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="generator" content="gh:importantimport/gumori" />
