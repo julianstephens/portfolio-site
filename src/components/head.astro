@@ -54,15 +54,3 @@ const permalink = site.url + (page ? page.url.current : post.frontmatter.path);
 
 <!-- Scripts -->
 {site.scripts?.map(({ src, type, async, defer }) => <script src={src} type={type} async={async} defer={defer} />)}
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-F4V9JK9ZR4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-  gtag("js", new Date());
-
-  gtag("config", "G-F4V9JK9ZR4");
-</script>
