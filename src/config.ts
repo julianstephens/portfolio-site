@@ -2,19 +2,19 @@ const NAME = "Julian Stephens";
 export const site: Config.Site = {
   url: import.meta.env.PUBLIC_BASE_URL,
   title: NAME,
-  description: "Fullstack developer @ NBCUniversal",
+  description: "Developer @ NBCUniversal",
   keywords: ["development", "fullstack", "programming"],
   authors: {
     default: {
       name: NAME,
       url: import.meta.env.BASE_URL,
       default: true,
-      // },
-      // default2: {
-      //   name: 'Jane Doe',
-      //   url: import.meta.env.SITE,
-      //   default: true
     },
+    // default2: {
+    //   name: NAME,
+    //   url: import.meta.env.BASE_URL,
+    //   default: true,
+    // },
   },
   lang: "en",
   stylesheets: [
