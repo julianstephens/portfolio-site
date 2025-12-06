@@ -1,5 +1,5 @@
 import { readFile, writeFileSync } from "fs";
-import * as matter from "gray-matter";
+import matter from "gray-matter";
 import { Octokit } from "octokit";
 import * as path from "path";
 import { fileURLToPath } from "url";
@@ -106,9 +106,8 @@ const saveSiteFiles = async () => {
     // if existing, prefer saved published date
     readFile(saveLoc, (err, contents) => {
       if (!err) {
-        // @ts-ignore
-        const { data } = matter.default(contents.toString());
-        frontmatter.published = new Date((data as GhFrontmatter).published).toISOString().slice(0, 10);
+        const { data } = matter(contents.toString()) as { data: GhFrontmatter };
+        frontmatter.published = new Date(data.published).toISOString().slice(0, 10);
       }
 
       const contentWithFm = toFMStr(frontmatter) + content;

@@ -36,9 +36,11 @@ const date = data.published ?? data.created;
         <div class="prose e-content">
           <Content />
           <div style="margin-top:4rem;display: flex;flex-direction: row;justify-content: space-between;width: 100%;">
-            <a itemprop="url" href={data.repoUrl}>
-              {data.repoUrl}
-            </a>
+            {data.repoUrl && (
+              <a itemprop="url" href={data.repoUrl}>
+                {data.repoUrl}
+              </a>
+            )}
             <div>
               Published on <Date date={date} />
             </div>
