@@ -2,7 +2,8 @@
 import { date as dateFormatConfig } from "@src/config";
 
 const { date: dateValue } = Astro.props as { date?: Date };
-const dateObj = dateValue instanceof Date ? dateValue : dateValue ? new Date(dateValue) : new Date();
+if (!dateValue) return null;
+const dateObj = dateValue instanceof Date ? dateValue : new Date(dateValue);
 ---
 
 <time itemprop="datePublished" class="dt-published" datetime={dateObj.toISOString()}>
