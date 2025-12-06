@@ -2,6 +2,7 @@ import { defineConfig } from "astro/config";
 
 import { Portfolio } from "./src/scripts/vite";
 
+import mermaid from "astro-mermaid";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
@@ -10,6 +11,7 @@ import remarkGfm from "remark-gfm";
 // https://astro.build/config
 export default defineConfig({
   site: "https://julianstephens.net",
+  integrations: [mermaid()],
   markdown: {
     syntaxHighlight: false,
     remarkPlugins: [remarkGfm],

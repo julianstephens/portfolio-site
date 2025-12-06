@@ -52,18 +52,18 @@ const getSiteFile = async (repo: string) => {
 };
 
 const getSiteData = async () => {
-  const repos = await gh.request("GET /users/{username}/repos", {
-    username: ENV.GH_USER,
-    headers: {
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
+  const repos = await gh.paginate(gh.rest.repos.listForAuthenticatedUser, {
+    per_page: 100,
   });
+
+  console.debug("total repos: ", repos.length);
 
   const siteFiles: Response[] = [];
 
-  for (const r of repos.data) {
+  for await (const r of repos) {
     const f = await getSiteFile(r.name);
     if (f) {
+      console.debug("found SITE.md in repo: ", r.name);
       const res: Response = {
         repoName: r.name.replaceAll("_", "-"),
         repoUrl: r.html_url,
