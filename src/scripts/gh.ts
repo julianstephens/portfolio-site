@@ -1,7 +1,7 @@
 import { readFile, writeFileSync } from "fs";
-import * as matter from "gray-matter";
+import matter from "gray-matter";
 import { Octokit } from "octokit";
-import * as path from "path";
+import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -40,13 +40,10 @@ const toFMStr = (frontmatter: GhFrontmatter) => {
 
 const getSiteFile = async (repo: string) => {
   try {
-    const contents = await gh.request("GET /repos/{owner}/{repo}/contents/{path}", {
+    const contents = await gh.rest.repos.getContent({
       owner: ENV.GH_USER,
       repo: repo,
       path: "SITE.md",
-      headers: {
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
     });
 
     if (contents.status != 200) {
