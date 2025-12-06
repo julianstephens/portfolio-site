@@ -6,6 +6,14 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+type GhFrontmatter = {
+  title: string;
+  published: string;
+  path: string;
+  repoUrl: string;
+  summary: string;
+};
+
 export type Response = {
   repoName: string;
   repoUrl: string;
@@ -20,7 +28,7 @@ const gh = new Octokit({
   auth: ENV.GH_PAT,
 });
 
-const toFMStr = (frontmatter: Frontmatter) => {
+const toFMStr = (frontmatter: GhFrontmatter) => {
   let fmStr = "---\n";
   Object.entries(frontmatter).forEach(([k, v]) => {
     fmStr += `${k}: ${v}\n`;
@@ -79,12 +87,12 @@ const getSiteData = async () => {
 };
 
 const saveSiteFiles = async () => {
-  const outDir = path.join(__dirname, "..", "..", "portfolio");
+  const outDir = path.join(__dirname, "..", "content", "portfolio");
   const files = await getSiteData();
   for (const f of files) {
     const content = Buffer.from(f.content, "base64").toString("utf-8");
     const title = content.split("\n")[0].slice(2);
-    const frontmatter: Frontmatter = {
+    const frontmatter: GhFrontmatter = {
       title,
       published: new Date().toISOString().slice(0, 10),
       path: `/${f.repoName}`,
@@ -100,7 +108,7 @@ const saveSiteFiles = async () => {
       if (!err) {
         // @ts-ignore
         const { data } = matter.default(contents.toString());
-        frontmatter.published = new Date((data as Frontmatter).published).toISOString().slice(0, 10);
+        frontmatter.published = new Date((data as GhFrontmatter).published).toISOString().slice(0, 10);
       }
 
       const contentWithFm = toFMStr(frontmatter) + content;

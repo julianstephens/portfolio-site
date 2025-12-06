@@ -1,9 +1,10 @@
 ---
-import { date as dateConfig } from "@src/config";
+import { date as dateFormatConfig } from "@src/config";
 
-const { date } = Astro.props as { date: string };
+const { date: dateValue } = Astro.props as { date?: Date };
+const dateObj = dateValue instanceof Date ? dateValue : dateValue ? new Date(dateValue) : new Date();
 ---
 
-<time itemprop="datePublished" class="dt-published" datetime={new Date(date).toISOString()}>
-  {Date(date).toLocaleString(dateConfig.locales, dateConfig.options)}
+<time itemprop="datePublished" class="dt-published" datetime={dateObj.toISOString()}>
+  {dateObj.toLocaleString(dateFormatConfig.locales, dateFormatConfig.options)}
 </time>

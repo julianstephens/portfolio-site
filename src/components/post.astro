@@ -1,26 +1,31 @@
 ---
 import Date from "@components/post/date.astro";
 import { page as pageConfig, site } from "@src/config";
+import { render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 
 const { post, preview } = Astro.props as {
-  post: Post;
+  post: CollectionEntry<"portfolio">;
   preview?: boolean;
 };
-const { frontmatter, Content } = post;
-const date = frontmatter.published ?? frontmatter.created ?? "";
+
+const { Content } = await render(post);
+const { data } = post;
+const path = `/${post.slug}`;
+const date = data.published ?? data.created;
 ---
 
 <article itemscope itemtype="https://schema.org/BlogPosting" itemprop="blogPost" class="h-entry">
-  <a style="display: none" class="u-url u-uid" href={site.url + frontmatter.path}>{frontmatter.path}</a>
+  <a style="display: none" class="u-url u-uid" href={site.url + path}>{path}</a>
   {
     preview && (
       <>
         <h4 itemprop="name headline" class="!text-4xl !mt-0 !mb-4" style="border: 0;">
-          <a itemprop="url" class="hover:!underline cursor-pointer u-url p-name" href={frontmatter.path}>
-            {frontmatter.title}
+          <a itemprop="url" class="hover:!underline cursor-pointer u-url p-name" href={path}>
+            {data.title}
           </a>
         </h4>
-        {frontmatter.summary && <p class="p-summary">{frontmatter.summary}</p>}
+        {data.summary && <p class="p-summary">{data.summary}</p>}
       </>
     )
   }
@@ -31,11 +36,11 @@ const date = frontmatter.published ?? frontmatter.created ?? "";
         <div class="prose e-content">
           <Content />
           <div style="margin-top:4rem;display: flex;flex-direction: row;justify-content: space-between;width: 100%;">
-            <a itemprop="url" href={frontmatter.repoUrl}>
-              {frontmatter.repoUrl}
+            <a itemprop="url" href={data.repoUrl}>
+              {data.repoUrl}
             </a>
             <div>
-              Published on <Date date={frontmatter.published} />
+              Published on <Date date={date} />
             </div>
           </div>
         </div>

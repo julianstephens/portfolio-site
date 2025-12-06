@@ -1,5 +1,10 @@
 ---
-const { url } = Astro.props as { url: Page["url"] };
+type PageUrl = {
+  current: string;
+  next?: string;
+  prev?: string;
+};
+const { url } = Astro.props as { url: PageUrl };
 ---
 
 <nav>

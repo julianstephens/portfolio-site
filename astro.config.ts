@@ -1,7 +1,5 @@
 import { defineConfig } from "astro/config";
 
-import { Portfolio } from "./src/scripts/vite";
-
 import mermaid from "astro-mermaid";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
@@ -34,6 +32,5 @@ export default defineConfig({
   },
   vite: {
     optimizeDeps: { exclude: ["url"] },
-    plugins: [Portfolio()],
   },
 });
