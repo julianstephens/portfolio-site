@@ -1,12 +1,14 @@
 ---
 import { site } from "@src/config";
+import type { FFFAuthor } from "fff-flavored-frontmatter";
 
-const { authors } = Astro.props as { authors: Frontmatter["authors"] };
+type Author = string | FFFAuthor;
+const { authors } = Astro.props as { authors?: Author[] };
 ---
 
 {
   (authors
-    ? authors.map((author) => (typeof author === "string" ? site.authors[author] : author))
+    ? authors.map((author: Author) => (typeof author === "string" ? site.authors[author] : author))
     : Object.values(site.authors).filter((author) => author.default)
   ).map(({ name, url }: { [key: string]: string }, index: number, array: string | unknown[]) => (
     <>

@@ -4,67 +4,51 @@ import Head from "@components/head.astro";
 import Page from "@components/page.astro";
 import Post from "@components/post.astro";
 import { page as pageConfig, site } from "@src/config";
-import { resolve } from "path";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 
-export const getStaticPaths = async ({ paginate }) => {
-  const posts = await Astro.glob("../../portfolio/**/*.md");
-  const pages = paginate(
-    posts
-      .filter((post) => !post.frontmatter.flags?.includes("unlisted"))
-      .sort(
-        (a, b) =>
-          Date.parse(b.frontmatter.published ?? b.frontmatter.created) -
-          Date.parse(a.frontmatter.published ?? a.frontmatter.created),
-      ),
-    { pageSize: pageConfig.pageSize ?? 5 },
-  );
+export const getStaticPaths = async ({ paginate }: { paginate: Function }) => {
+  const allPosts = await getCollection("portfolio");
+  const posts = allPosts
+    .filter((post) => !post.data.flags?.includes("unlisted"))
+    .sort(
+      (a, b) =>
+        (b.data.published?.getTime() ?? b.data.created?.getTime() ?? 0) -
+        (a.data.published?.getTime() ?? a.data.created?.getTime() ?? 0),
+    );
 
-  // posts.forEach(post => console.log(post.file))
+  const pages = paginate(posts, { pageSize: pageConfig.pageSize ?? 5 });
 
   return [
-    ...pages.map(({ params, props }) => ({
+    ...pages.map(({ params, props }: { params: { page?: string }; props: { page: PageData } }) => ({
       params,
-      props: {
-        page: {
-          ...props.page,
-          data: props.page.data.map((post: Post) => ({
-            ...post,
-            frontmatter: {
-              ...post.frontmatter,
-              slug: post.file.replace(resolve("portfolio"), ""),
-              path: post.file
-                .replace(resolve("portfolio"), "")
-                .replace(/(.+?)(?:\/index\.md|\.md)/, "$1")
-                .slice(1),
-            },
-          })),
-        },
-      },
+      props: { page: props.page },
     })),
     ...posts.map((post) => ({
-      params: {
-        page: post.file
-          .replace(resolve("portfolio"), "")
-          .replace(/(.+?)(?:\/index\.md|\.md)/, "$1")
-          .slice(1),
-      },
-      props: {
-        post: {
-          ...post,
-          frontmatter: {
-            ...post.frontmatter,
-            slug: post.file.replace(/.+?\/posts(.+)/, "$1"),
-            path: post.file.replace(/.+?\/posts(.+)(index\.md|\.md)/, "$1").slice(1),
-          },
-        },
-      },
+      params: { page: post.slug },
+      props: { post },
     })),
   ];
 };
 
+type PageData = {
+  data: CollectionEntry<"portfolio">[];
+  start: number;
+  end: number;
+  size: number;
+  total: number;
+  currentPage: number;
+  lastPage: number;
+  url: {
+    current: string;
+    next?: string;
+    prev?: string;
+  };
+};
+
 const { page, post } = Astro.props as {
-  page: Page;
-  post: Post;
+  page?: PageData;
+  post?: CollectionEntry<"portfolio">;
 };
 
 import.meta.env.DEV && console.log(page ?? post);
@@ -72,11 +56,11 @@ import.meta.env.DEV && console.log(page ?? post);
 
 <html lang={site.lang ?? "en"}>
   <head prefix="og: https://ogp.me/ns#">
-    <Head {page} {post} />
+    <Head page={page} post={post} />
   </head>
   <body class={page ? "h-feed" : ""} itemscope itemtype="https://schema.org/WebPage">
     <main itemprop="mainEntityOfPage" itemscope itemtype={page ? "https://schema.org/Blog" : ""}>
-      {post ? <Post post={post} /> : <Page page={page} />}
+      {post ? <Post post={post} /> : page ? <Page page={page} /> : null}
       <Footer />
     </main>
   </body>

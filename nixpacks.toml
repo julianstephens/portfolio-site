@@ -1,0 +1,6 @@
+[phase.sync]
+  cmds = ["pnpm gh"]
+  dependsOn = ["install"]
+
+[phase.build]
+dependsOn = ["...", "sync"]

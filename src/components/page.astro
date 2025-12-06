@@ -1,8 +1,24 @@
 ---
 import Post from "@components/post.astro";
 import Pagination from "@components/pagination.astro";
+import type { CollectionEntry } from "astro:content";
 
-const { page } = Astro.props as { page: Page };
+type PageData = {
+  data: CollectionEntry<"portfolio">[];
+  start: number;
+  end: number;
+  size: number;
+  total: number;
+  currentPage: number;
+  lastPage: number;
+  url: {
+    current: string;
+    next?: string;
+    prev?: string;
+  };
+};
+
+const { page } = Astro.props as { page: PageData };
 const { url } = page;
 console.log("next url", url.next);
 console.log("prev url", url.prev);

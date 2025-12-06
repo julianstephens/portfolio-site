@@ -1,10 +1,18 @@
 import { readFile, writeFileSync } from "fs";
-import * as matter from "gray-matter";
+import matter from "gray-matter";
 import { Octokit } from "octokit";
-import * as path from "path";
+import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+type GhFrontmatter = {
+  title: string;
+  published: string;
+  path: string;
+  repoUrl: string;
+  summary: string;
+};
 
 export type Response = {
   repoName: string;
@@ -20,7 +28,7 @@ const gh = new Octokit({
   auth: ENV.GH_PAT,
 });
 
-const toFMStr = (frontmatter: Frontmatter) => {
+const toFMStr = (frontmatter: GhFrontmatter) => {
   let fmStr = "---\n";
   Object.entries(frontmatter).forEach(([k, v]) => {
     fmStr += `${k}: ${v}\n`;
@@ -32,13 +40,10 @@ const toFMStr = (frontmatter: Frontmatter) => {
 
 const getSiteFile = async (repo: string) => {
   try {
-    const contents = await gh.request("GET /repos/{owner}/{repo}/contents/{path}", {
+    const contents = await gh.rest.repos.getContent({
       owner: ENV.GH_USER,
       repo: repo,
       path: "SITE.md",
-      headers: {
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
     });
 
     if (contents.status != 200) {
@@ -79,12 +84,12 @@ const getSiteData = async () => {
 };
 
 const saveSiteFiles = async () => {
-  const outDir = path.join(__dirname, "..", "..", "portfolio");
+  const outDir = path.join(__dirname, "..", "content", "portfolio");
   const files = await getSiteData();
   for (const f of files) {
     const content = Buffer.from(f.content, "base64").toString("utf-8");
     const title = content.split("\n")[0].slice(2);
-    const frontmatter: Frontmatter = {
+    const frontmatter: GhFrontmatter = {
       title,
       published: new Date().toISOString().slice(0, 10),
       path: `/${f.repoName}`,
@@ -98,9 +103,8 @@ const saveSiteFiles = async () => {
     // if existing, prefer saved published date
     readFile(saveLoc, (err, contents) => {
       if (!err) {
-        // @ts-ignore
-        const { data } = matter.default(contents.toString());
-        frontmatter.published = new Date((data as Frontmatter).published).toISOString().slice(0, 10);
+        const { data } = matter(contents.toString()) as { data: GhFrontmatter };
+        frontmatter.published = new Date(data.published).toISOString().slice(0, 10);
       }
 
       const contentWithFm = toFMStr(frontmatter) + content;

@@ -41,6 +41,3 @@ export const date: Config.Date = {
     day: "numeric",
   },
 };
-
-export const typeOfPost = (frontmatter: Frontmatter): string =>
-  frontmatter.title ? "article" : frontmatter.image ? "photo" : "note";
