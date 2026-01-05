@@ -20,8 +20,6 @@ type PageData = {
 
 const { page } = Astro.props as { page: PageData };
 const { url } = page;
-console.log("next url", url.next);
-console.log("prev url", url.prev);
 ---
 
 {page.data.map((post) => <Post post={post} preview={true} />)}
