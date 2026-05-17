@@ -1,8 +1,8 @@
 ---
 title: Email Notification Service
-published: 2023-11-10
+published: '2023-11-10'
 path: /email-notification-service
-repoUrl: https://github.com/julianstephens/email_notification_service
+repoUrl: 'https://github.com/julianstephens/email_notification_service'
 summary: Python CLI for automating useful email templates
 ---
 

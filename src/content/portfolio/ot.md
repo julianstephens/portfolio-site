@@ -1,9 +1,11 @@
 ---
 title: One Thing
-published: 2025-12-27
+published: '2025-12-27'
 path: /ot
-repoUrl: https://github.com/julianstephens/ot
-summary: CLI for choosing one non-negotiable commitment per day and tracking whether it happens
+repoUrl: 'https://github.com/julianstephens/ot'
+summary: >-
+  CLI for choosing one non-negotiable commitment per day and tracking whether it
+  happens
 ---
 
 # One Thing

@@ -1,9 +1,9 @@
 ---
-title: "Daylit: Personal Productivity System"
-published: 2026-01-05
+title: 'Daylit: Personal Productivity System'
+published: '2026-01-05'
 path: /daylit
-repoUrl: https://github.com/julianstephens/daylit
-summary: A comprehensive daily structure and time-blocking system 
+repoUrl: 'https://github.com/julianstephens/daylit'
+summary: 'A comprehensive daily structure and time-blocking system '
 ---
 
 # Daylit: Personal Productivity System

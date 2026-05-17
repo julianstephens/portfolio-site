@@ -1,9 +1,11 @@
 ---
 title: Daily Office Lectionary Discord Bot
-published: 2024-05-17
+published: '2024-05-17'
 path: /daily-office-lectionary
-repoUrl: https://github.com/julianstephens/daily-office-lectionary
-summary: Discord Bot for BCP 1662 Daily Office Lectionary w/ BCP 1979 Psalter and Collects
+repoUrl: 'https://github.com/julianstephens/daily-office-lectionary'
+summary: >-
+  Discord Bot for BCP 1662 Daily Office Lectionary w/ BCP 1979 Psalter and
+  Collects
 ---
 
 # Daily Office Lectionary Discord Bot
