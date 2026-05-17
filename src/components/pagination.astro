@@ -7,38 +7,29 @@ type PageUrl = {
 const { url } = Astro.props as { url: PageUrl };
 ---
 
-<nav class="flex justify-end gap-4 w-full max-w-content-md mx-auto px-4 sm:px-6 lg:px-8 my-8">
+<nav aria-label="Pagination" class="flex justify-end gap-4 w-full max-w-content-md mx-auto px-4 sm:px-6 lg:px-8 my-8">
   {
     url.next != null && (
-      <h4 class="m-0 border-0">
-        <a 
-          href={url.next} 
-          rel="next"
-          class="hover:underline transition-colors"
-          style="color: #059669;"
-        >
-          Older
-        </a>
-      </h4>
+      <a
+        href={url.next}
+        rel="next"
+        aria-label="Older posts"
+        class="text-[#059669] dark:text-[#34d399] hover:underline transition-colors"
+      >
+        Older
+      </a>
     )
   }
   {
     url.prev != null && (
-      <h3 class="m-0 border-0">
-        <a 
-          href={url.prev || "/"} 
-          rel="prev"
-          class="hover:underline transition-colors"
-          style="color: #059669;"
-        >
-          Newer
-        </a>
-      </h3>
+      <a
+        href={url.prev || "/"}
+        rel="prev"
+        aria-label="Newer posts"
+        class="text-[#059669] dark:text-[#34d399] hover:underline transition-colors"
+      >
+        Newer
+      </a>
     )
   }
-  <style>
-    .dark a {
-      color: #34d399 !important;
-    }
-  </style>
 </nav>

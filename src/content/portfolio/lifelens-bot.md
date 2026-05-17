@@ -1,11 +1,11 @@
 ---
 title: Lifelens Telegram Bot
-published: '2022-11-27'
+published: "2022-11-27"
 path: /lifelens-bot
-repoUrl: 'https://github.com/julianstephens/lifelens-bot'
+repoUrl: "https://github.com/julianstephens/lifelens-bot"
 summary: A prompt based diary in Telegram
 complete: true
-deployUrl: 'https://lifelens-bot.vercel.app'
+deployUrl: "https://lifelens-bot.vercel.app"
 ---
 
 # Lifelens Telegram Bot

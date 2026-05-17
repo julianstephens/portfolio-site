@@ -23,13 +23,13 @@ export default defineConfig({
           onVisitLine(node: any) {
             // Prevent lines from collapsing in `display: grid` mode
             if (node.children.length === 0) {
-              node.children = [{ type: 'text', value: ' ' }];
+              node.children = [{ type: "text", value: " " }];
             }
           },
           onVisitHighlightedLine(node: any) {
-            node.properties.className = [...(node.properties.className || []), 'line--highlighted'];
+            node.properties.className = [...(node.properties.className || []), "line--highlighted"];
           },
-        }
+        },
       ] as any,
       rehypeSlug,
       [

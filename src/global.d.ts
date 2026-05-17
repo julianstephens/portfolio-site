@@ -38,16 +38,16 @@ declare global {
 
     type Nav =
       | {
-        text: string;
-        link: string;
-      }[]
+          text: string;
+          link: string;
+        }[]
       | [];
 
     type RSS = {
       limit?: number;
       customData?: string;
       stylesheet?: string;
-      xmlns?: { [key: string]: string; };
+      xmlns?: { [key: string]: string };
     };
 
     type Date = {
@@ -67,5 +67,4 @@ declare global {
   }
 }
 
-export { };
-
+export {};

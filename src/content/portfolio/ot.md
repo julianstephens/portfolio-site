@@ -1,8 +1,8 @@
 ---
 title: One Thing
-published: '2025-12-27'
+published: "2025-12-27"
 path: /ot
-repoUrl: 'https://github.com/julianstephens/ot'
+repoUrl: "https://github.com/julianstephens/ot"
 summary: >-
   CLI for choosing one non-negotiable commitment per day and tracking whether it
   happens
@@ -18,6 +18,7 @@ CLI for choosing one non-negotiable commitment per day and tracking whether it h
 - **Day**: A calendar date in your local timezone (`YYYY-MM-DD`).
 - **Commitment**: The “one thing” chosen for a day, e.g. `"Call mom"`.
 - **Status** (per day):
+
   - `pending` — commitment exists, not yet completed.
   - `done` — completed.
   - `skipped` — explicitly not done.
@@ -162,6 +163,7 @@ ot today -d 2025-12-24
 **Behavior:**
 
 - If commitment exists and is pending:
+
   - Print: `Pending today: '<title>'`
 
 - If no commitment:
@@ -184,10 +186,12 @@ ot nudge
 **Behavior:**
 
 - Compute target date:
+
   - Default: today.
   - Or `--date YYYY-MM-DD` (or `-d`).
 
 - If date already has a commitment and `--force` not given:
+
   - Print error and show existing commitment.
 
 - If no commitment (or `--force`), set:
@@ -213,6 +217,7 @@ ot set --force "Replace today's commitment with something else"
 **Behavior:**
 
 - Target date:
+
   - Default: today.
   - Or `--date YYYY-MM-DD` (or `-d`).
 
@@ -236,10 +241,12 @@ ot edit -d 2025-12-28 "Finish draft of section 4"
 **Behavior:**
 
 - Compute target date:
+
   - Default: today.
   - Or `--date YYYY-MM-DD` (or `-d`).
 
 - If no commitment:
+
   - Prompt if `settings.auto_prompt_on_empty` else print error
 
 - Replace `note` with provided `message`
@@ -263,9 +270,11 @@ ot note -d 2025-12-25
 
 - Target date = today, unless `--date` (or `-d`) given.
 - If no commitment exists:
+
   - Print: `No commitment set for 2025-12-26.`
 
 - If status already `done`:
+
   - Print: `Already done: "<title>"`.
 
 - Else:
@@ -338,6 +347,7 @@ If using `--month`, you can show days in calendar order.
 For a given `--month YYYY-MM` (default: current month):
 
 - Count:
+
   - `total_days_with_commitment`
   - `done_count`
   - `skipped_count`

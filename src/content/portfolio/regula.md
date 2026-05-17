@@ -1,10 +1,12 @@
 ---
 title: Regula
-published: '2026-05-17'
+published: "2026-05-17"
 path: /regula
-repoUrl: 'https://github.com/julianstephens/regula'
+repoUrl: "https://github.com/julianstephens/regula"
 summary: A PocketBase-backed personal learning management system
 complete: true
+image: >-
+  https://raw.githubusercontent.com/julianstephens/regula/main/docs/img/cover.png
 ---
 
 # Regula

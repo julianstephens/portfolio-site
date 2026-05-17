@@ -15,22 +15,34 @@ const path = `/${post.id}`;
 const date = data.published ?? data.created;
 ---
 
-<article itemscope itemtype="https://schema.org/BlogPosting" itemprop="blogPost" class="h-entry w-full max-w-content-md mx-auto px-4 sm:px-6 lg:px-8">
-  <a style="display: none" class="u-url u-uid" href={site.url + path}>{path}</a>
+<article
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+  itemprop="blogPost"
+  class="h-entry w-full max-w-content-md mx-auto px-4 sm:px-6 lg:px-8"
+>
+  <a aria-hidden="true" style="display: none" class="u-url u-uid" href={site.url + path}>{path}</a>
   {
     preview && (
-      <>
-        <h4 itemprop="name headline" class="text-lg sm:text-xl font-semibold mt-0 mb-1.5 border-0">
-          <a 
-            itemprop="url" 
-            class="text-[#171717] dark:text-[#f5f5f5] hover:underline cursor-pointer u-url p-name no-underline" 
-            href={path}
+      <a itemprop="url" href={path} class="flex items-center gap-4 group no-underline">
+        <div class="flex-1 min-w-0">
+          <h4
+            itemprop="name headline"
+            class="text-lg sm:text-xl font-semibold mt-0 mb-1.5 border-0 group-hover:underline text-[#171717] dark:text-[#f5f5f5] u-url p-name"
           >
             {data.title}
-          </a>
-        </h4>
-        {data.summary && <p class="text-sm text-[#525252] dark:text-[#a3a3a3] mb-0">{data.summary}</p>}
-      </>
+          </h4>
+          {data.summary && <p class="text-sm text-[#525252] dark:text-[#a3a3a3] mb-0">{data.summary}</p>}
+        </div>
+        {data.image && (
+          <img
+            src={data.image}
+            alt={`${data.title} cover`}
+            class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md flex-shrink-0"
+            loading="lazy"
+          />
+        )}
+      </a>
     )
   }
 
@@ -38,13 +50,20 @@ const date = data.published ?? data.created;
     {
       (!preview || pageConfig.preview?.content) && (
         <div class="prose prose-lg dark:prose-invert max-w-none e-content">
+          {!preview && data.image && (
+            <div class="not-prose mb-8 rounded-lg overflow-hidden bg-[#f5f5f5] dark:bg-[#1a1a1a]">
+              <img src={data.image} alt={`${data.title} cover`} class="w-full h-auto object-contain" loading="eager" />
+            </div>
+          )}
           <Content />
           <div class="mt-16 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-6 border-t border-[#e5e5e5] dark:border-[#2a2a2a]">
             {data.repoUrl && (
-              <a 
+              <a
                 target="_blank"
-                itemprop="url" 
+                rel="noopener noreferrer"
+                itemprop="url"
                 href={data.repoUrl}
+                aria-label={`View source code on GitHub (opens in new tab): ${data.repoUrl}`}
                 class="text-[#059669] dark:text-[#34d399] hover:underline transition-colors break-all"
               >
                 {data.repoUrl}

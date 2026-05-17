@@ -2,7 +2,8 @@
 import { date as dateFormatConfig } from "@src/config";
 
 const { date: dateValue } = Astro.props as { date?: Date };
-if (!dateValue) return null;
+if (!dateValue) ___astro_return;
+throw null;
 const dateObj = dateValue instanceof Date ? dateValue : new Date(dateValue);
 ---
 

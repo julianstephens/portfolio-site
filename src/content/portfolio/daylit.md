@@ -1,11 +1,11 @@
 ---
-title: 'Daylit: Personal Productivity System'
-published: '2026-01-05'
+title: "Daylit: Personal Productivity System"
+published: "2026-01-05"
 path: /daylit
-repoUrl: 'https://github.com/julianstephens/daylit'
-summary: 'A comprehensive daily structure and time-blocking system '
+repoUrl: "https://github.com/julianstephens/daylit"
+summary: "A comprehensive daily structure and time-blocking system "
 complete: true
-deployUrl: 'https://julianstephens.net/daylit'
+deployUrl: "https://julianstephens.net/daylit"
 ---
 
 # Daylit: Personal Productivity System
@@ -29,28 +29,32 @@ The system demonstrates a decoupled, secure architecture:
 
 ### Tech Stack
 
-| Component | Technology | Highlights |
-| :--- | :--- | :--- |
-| **CLI Core** | **Go** | Clean Architecture, strictly typed domain logic |
-| **CLI UI** | **Bubble Tea** | Interactive TUI for plan management |
-| **Tray Backend** | **Rust** | Memory safety, OS-native system tray integration |
-| **Tray Frontend** | **TypeScript + React** | Modern, reactive UI components |
-| **Framework** | **Tauri v2** | Lightweight electron alternative |
+| Component         | Technology             | Highlights                                       |
+| :---------------- | :--------------------- | :----------------------------------------------- |
+| **CLI Core**      | **Go**                 | Clean Architecture, strictly typed domain logic  |
+| **CLI UI**        | **Bubble Tea**         | Interactive TUI for plan management              |
+| **Tray Backend**  | **Rust**               | Memory safety, OS-native system tray integration |
+| **Tray Frontend** | **TypeScript + React** | Modern, reactive UI components                   |
+| **Framework**     | **Tauri v2**           | Lightweight electron alternative                 |
 
 ## Engineering Standards
 
 ### 1. Robust Testing Strategy
+
 - **Unit Tests**: Extensive coverage for domain logic (scheduler, recurrence rules).
 - **Integration Tests**: Specialized test harnesses for database interactions (`internal/backup`, `storage`).
 - **E2E Tests**: Full workflow validation located in `tests/e2e`.
 
 ### 2. Code Quality & Static Analysis
+
 - **Go**: `golangci-lint` with strict presets + `go vet`.
 - **Rust**: `cargo clippy` with `-D warnings` (zero warnings policy).
 - **TypeScript**: `eslint` + Strict type checking.
 
 ### 3. Clean Architecture
- The Go CLI follows a strict package layout to separate concerns:
+
+The Go CLI follows a strict package layout to separate concerns:
+
 - `internal/scheduler`: Pure domain logic (no IO).
 - `internal/storage`: Implementation details for persistence.
 - `internal/cli`: Interface layer using `Kong`.
@@ -58,41 +62,48 @@ The system demonstrates a decoupled, secure architecture:
 ## Key Features
 
 ### Smart Scheduling
+
 **Problem**: Traditional calendars don't handle "do this sometime today" well.
 
 **Solution**: A deterministic bin-packing algorithm that treats the day as a container.
 
 **Implementation**:
+
 - **Fixed-First Strategy**: Anchors the schedule with appointments (hard constraints) first to identify available free blocks.
 - **Dynamic Bin-Packing**: Flexible tasks are sorted by priority and "lateness" (days since last completion), then fit into available gaps using a greedy algorithm.
 - **Recurrence Engine**: Handles complex patterns (e.g., "every 3 days", "weekdays only") to filter candidate tasks for the day.
 
 ### Feedback Loop & Optimization
+
 **Problem**: Schedules usually fail because estimates are wrong.
 
 **Solution**: A closed-loop system that learns from reality.
 
 **Implementation**:
+
 - **Exponential Moving Average (EMA)**: The system tracks "actual" vs "planned" duration for every task execution, updating a weighted average to refine future time slots automatically.
 - **Signal Analysis**: The `optimizer` package aggregates qualitative feedback (`too_much`, `unnecessary`) to detect patterns.
 - **Actionable Insights**: If a task is consistently marked "too much", the system suggests specific optimizations (e.g., "reduce duration by 10%" or "split task").
 
 ### Resilience & Safety
+
 **Problem**: Accidental data loss and destructive edits break trust in the system.
 
 **Solution**: A non-destructive "Soft Delete" architecture.
 
 **Implementation**:
+
 - **Tombstone Pattern**: All core entities (`Task`, `Plan`, `Habit`) use nullable `deleted_at` timestamps instead of hard removal.
 - **Restoration API**: First-class CLI support for restoring deleted items allows users to undo mistakes instantly.
 - **Referential Integrity**: Keeps historical statistics valid even when tasks are seemingly removed from the active view.
 
 ### Secure Credentials
+
 **Problem**: Storing database passwords in plaintext config files is a security risk.
 
 **Solution**: Leveraging the operating system's native secret management.
 
 **Implementation**:
+
 - **OS Integration**: Uses `zalando/go-keyring` to interface directly with macOS Keychain, Windows Credential Manager, or Linux Secret Service (dbus).
 - **Zero-Config Secrets**: Connection strings are stored securely at runtime, keeping `config.yaml` clean and safe to check into version control (minus the secrets).
-

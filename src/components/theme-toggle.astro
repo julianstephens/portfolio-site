@@ -6,38 +6,40 @@
   type="button"
   class="theme-toggle inline-flex items-center justify-center p-2 rounded-lg focus:outline-none focus:ring-2 transition-colors"
   aria-label="Toggle dark mode"
+  aria-pressed="false"
 >
   <style>
     .theme-toggle {
       background-color: #e5e5e5;
       color: #171717;
     }
-    
+
     .theme-toggle:hover {
       background-color: #171717;
       color: #e5e5e5;
     }
-    
+
     .theme-toggle:focus {
       ring-color: #d4d4d4;
     }
-    
+
     .dark .theme-toggle {
       background-color: #e5e5e5;
       color: #171717;
     }
-    
+
     .dark .theme-toggle:hover {
       background-color: #1a1a1a;
       color: #e5e5e5;
     }
-    
+
     .dark .theme-toggle:focus {
       ring-color: #2a2a2a;
     }
   </style>
   <!-- Moon icon (shown in light mode, click to go dark) -->
   <svg
+    aria-hidden="true"
     class="w-5 h-5 dark:hidden"
     fill="currentColor"
     viewBox="0 0 20 20"
@@ -47,6 +49,7 @@
   </svg>
   <!-- Sun icon (shown in dark mode, click to go light) -->
   <svg
+    aria-hidden="true"
     class="w-5 h-5 hidden dark:block"
     fill="currentColor"
     viewBox="0 0 20 20"
@@ -62,45 +65,52 @@
 <script is:inline>
   // Theme toggle functionality - runs on every page load
   function initThemeToggle() {
-    const themeToggles = document.querySelectorAll('.theme-toggle');
-    
+    const themeToggles = document.querySelectorAll(".theme-toggle");
+
     if (themeToggles.length === 0) {
       return;
     }
-    
-    // Check current theme
-    const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-    
+
+    // Check current theme and sync aria-pressed
+    const isDarkOnLoad = document.documentElement.classList.contains("dark");
+    themeToggles.forEach((toggle) => {
+      toggle.setAttribute("aria-pressed", String(isDarkOnLoad));
+    });
+
     // Add click event listener to all toggle buttons
     themeToggles.forEach((toggle, index) => {
       // Clone to remove old listeners
       const newToggle = toggle.cloneNode(true);
       toggle.parentNode?.replaceChild(newToggle, toggle);
-      
-      newToggle.addEventListener('click', () => {
-        const isDark = document.documentElement.classList.contains('dark');
-        
+
+      newToggle.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.contains("dark");
+
         if (isDark) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
+          document.documentElement.classList.remove("dark");
+          localStorage.setItem("theme", "light");
         } else {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
+          document.documentElement.classList.add("dark");
+          localStorage.setItem("theme", "dark");
         }
+
+        // Update aria-pressed on all toggles to reflect new state
+        document.querySelectorAll(".theme-toggle").forEach((t) => {
+          t.setAttribute("aria-pressed", String(!isDark));
+        });
       });
     });
   }
-  
+
   // Initialize on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initThemeToggle);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initThemeToggle);
   } else {
     initThemeToggle();
   }
-  
+
   // Re-initialize on Astro page transitions
-  document.addEventListener('astro:page-load', () => {
+  document.addEventListener("astro:page-load", () => {
     initThemeToggle();
   });
-  
 </script>

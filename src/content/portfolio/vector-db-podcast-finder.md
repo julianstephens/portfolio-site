@@ -1,8 +1,8 @@
 ---
 title: Vector DB Podcast Finder
-published: '2023-04-19'
+published: "2023-04-19"
 path: /vector-db-podcast-finder
-repoUrl: 'https://github.com/julianstephens/vector-db-podcast-finder'
+repoUrl: "https://github.com/julianstephens/vector-db-podcast-finder"
 summary: Weaviate + SvelteKit podcast proximity search tool
 complete: true
 ---

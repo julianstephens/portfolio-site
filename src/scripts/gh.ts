@@ -7,11 +7,7 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Process items in batches to avoid rate limiting
-async function batchProcess<T, R>(
-  items: T[],
-  batchSize: number,
-  processor: (item: T) => Promise<R>
-): Promise<R[]> {
+async function batchProcess<T, R>(items: T[], batchSize: number, processor: (item: T) => Promise<R>): Promise<R[]> {
   const results: R[] = [];
   for (let i = 0; i < items.length; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
@@ -121,10 +117,7 @@ const getSiteData = async (): Promise<Response[]> => {
 
   // Batch processing: fetch SITE.md files in batches of 10 to optimize API usage
   const results = await batchProcess(repos, 10, async (repo) => {
-    const [file, coverPhotoUrl] = await Promise.all([
-      getSiteFile(repo.name),
-      getCoverPhoto(repo.name),
-    ]);
+    const [file, coverPhotoUrl] = await Promise.all([getSiteFile(repo.name), getCoverPhoto(repo.name)]);
     if (!file) return null;
 
     const decoded = Buffer.from(file.content, "base64").toString("utf-8");
@@ -166,9 +159,7 @@ const saveSiteFiles = async (): Promise<void> => {
 
       // Extract title from first heading in the body
       const firstLine = content.split("\n").find((l) => l.trim() !== "") ?? "";
-      const title = firstLine.startsWith("#")
-        ? firstLine.replace(/^#+\s*/, "").trim()
-        : f.repoName;
+      const title = firstLine.startsWith("#") ? firstLine.replace(/^#+\s*/, "").trim() : f.repoName;
 
       const frontmatter: GhFrontmatter = {
         title,
@@ -205,7 +196,7 @@ const saveSiteFiles = async (): Promise<void> => {
   });
 
   const results = await Promise.all(writePromises);
-  const successCount = results.filter(r => r === true).length;
+  const successCount = results.filter((r) => r === true).length;
   const failCount = results.length - successCount;
 
   if (failCount > 0) {

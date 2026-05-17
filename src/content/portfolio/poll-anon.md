@@ -1,11 +1,11 @@
 ---
 title: Poll Anon
-published: '2026-05-17'
+published: "2026-05-17"
 path: /poll-anon
-repoUrl: 'https://github.com/julianstephens/poll-anon'
-summary: 'A web app for anonymous polls '
+repoUrl: "https://github.com/julianstephens/poll-anon"
+summary: "A web app for anonymous polls "
 complete: true
-deployUrl: 'https://poll-anon.cyborgdev.cloud'
+deployUrl: "https://poll-anon.cyborgdev.cloud"
 image: >-
   https://raw.githubusercontent.com/julianstephens/poll-anon/main/docs/img/cover.png
 ---
