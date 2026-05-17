@@ -14,7 +14,7 @@ export default defineConfig({
     syntaxHighlight: false,
     remarkPlugins: [remarkGfm],
     rehypePlugins: [
-      [rehypePrettyCode, { theme: { light: "github-light", dark: "github-dark" } }],
+      [rehypePrettyCode, { theme: { light: "github-light", dark: "github-dark" } }] as any,
       rehypeSlug,
       [
         rehypeAutolinkHeadings,
@@ -27,7 +27,7 @@ export default defineConfig({
             children: [{ type: "text", value: "#" }],
           },
         },
-      ],
+      ] as any,
     ],
   },
   vite: {

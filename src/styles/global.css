@@ -8,3 +8,31 @@ td,
 th {
   min-width: 5rem;
 }
+
+body {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.h-entry, .footer, .header {
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 1rem;
+}
+
+.header-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header p, .header hr {
+  margin: 0;
+}

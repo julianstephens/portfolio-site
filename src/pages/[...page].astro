@@ -1,11 +1,12 @@
 ---
 import Footer from "@components/footer.astro";
+import Header from "@components/header.astro";
 import Head from "@components/head.astro";
 import Page from "@components/page.astro";
 import Post from "@components/post.astro";
 import { page as pageConfig, site } from "@src/config";
-import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
 export const getStaticPaths = async ({ paginate }: { paginate: Function }) => {
   const allPosts = await getCollection("portfolio");
@@ -19,16 +20,21 @@ export const getStaticPaths = async ({ paginate }: { paginate: Function }) => {
 
   const pages = paginate(posts, { pageSize: pageConfig.pageSize ?? 5 });
 
-  return [
-    ...pages.map(({ params, props }: { params: { page?: string }; props: { page: PageData } }) => ({
+  const pageRoutes = pages.map(({ params, props }: { params: { page?: string }; props: { page: PageData } }) => {
+    return {
       params,
       props: { page: props.page },
-    })),
-    ...posts.map((post) => ({
-      params: { page: post.slug },
+    };
+  });
+
+  const postRoutes = posts.map((post) => {
+    return {
+      params: { page: post.id },
       props: { post },
-    })),
-  ];
+    };
+  });
+
+  return [...pageRoutes, ...postRoutes];
 };
 
 type PageData = {
@@ -60,6 +66,7 @@ import.meta.env.DEV && console.log(page ?? post);
   </head>
   <body class={page ? "h-feed" : ""} itemscope itemtype="https://schema.org/WebPage">
     <main itemprop="mainEntityOfPage" itemscope itemtype={page ? "https://schema.org/Blog" : ""}>
+      <Header />
       {post ? <Post post={post} /> : page ? <Page page={page} /> : null}
       <Footer />
     </main>
