@@ -25,7 +25,7 @@ export type Response = {
 const ENV = import.meta.env ?? process.env;
 
 const gh = new Octokit({
-  auth: ENV.GH_PAT,
+  auth: ENV.COOLIFY_GH_PAT,
 });
 
 const toFMStr = (frontmatter: GhFrontmatter) => {
@@ -103,7 +103,7 @@ const saveSiteFiles = async () => {
     // if existing, prefer saved published date
     readFile(saveLoc, (err, contents) => {
       if (!err) {
-        const { data } = matter(contents.toString()) as { data: GhFrontmatter };
+        const { data } = matter(contents.toString()) as unknown as { data: GhFrontmatter };
         frontmatter.published = new Date(data.published).toISOString().slice(0, 10);
       }
 

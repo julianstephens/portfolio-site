@@ -1,7 +1,7 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 interface ImportMetaEnv {
-  readonly GH_PAT: string;
+  readonly COOLIFY_GH_PAT: string;
   readonly GH_USER: string;
   readonly PUBLIC_BASE_URL: string;
   readonly PUBLIC_CONTACT_EMAIL: string;
@@ -10,3 +10,4 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
