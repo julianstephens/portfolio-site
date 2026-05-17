@@ -17,16 +17,7 @@ export const site: Config.Site = {
     // },
   },
   lang: "en",
-  stylesheets: [
-    "https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css", // new.css
-    // "https://cdn.jsdelivr.net/npm/water.css@2/out/water.css", // water.css
-    // "https://unpkg.com/sakura.css/css/sakura.css", // sakura.css
-    // "https://unpkg.com/@picocss/pico@latest/css/pico.classless.min.css", // pico.css
-    // "https://unpkg.com/bamboo.css", // bamboo.css
-    // "https://cdn.jsdelivr.net/npm/holiday.css@0.9.8", // holiday.css
-    // "https://cdn.simplecss.org/simple.min.css", // simple.css
-    // "https://unpkg.com/mvp.css", // mvp.css
-  ],
+  stylesheets: [],
 };
 
 export const page: Config.Page = {
@@ -39,5 +30,15 @@ export const date: Config.Date = {
     year: "numeric",
     month: "long",
     day: "numeric",
+  },
+};
+
+export const about: Config.About = {
+  bio: "I'm a Cyber Systems Engineer at NBCUniversal with a passion for human-centered computing. I enjoy working across the full stack, from low-level systems to web applications, and I'm especially interested in developer tooling, security, and automation.",
+  photo: "/avatar.jpg",
+  links: {
+    github: "https://github.com/julianstephens",
+    linkedin: "https://linkedin.com/in/juliangstephens",
+    resume: "/resume.pdf",
   },
 };

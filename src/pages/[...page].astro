@@ -1,7 +1,8 @@
 ---
+import About from "@components/about.astro";
 import Footer from "@components/footer.astro";
-import Header from "@components/header.astro";
 import Head from "@components/head.astro";
+import Header from "@components/header.astro";
 import Page from "@components/page.astro";
 import Post from "@components/post.astro";
 import { page as pageConfig, site } from "@src/config";
@@ -67,6 +68,7 @@ import.meta.env.DEV && console.log(page ?? post);
   <body class={page ? "h-feed" : ""} itemscope itemtype="https://schema.org/WebPage">
     <main itemprop="mainEntityOfPage" itemscope itemtype={page ? "https://schema.org/Blog" : ""}>
       <Header />
+      {page?.currentPage === 1 && <About />}
       {post ? <Post post={post} /> : page ? <Page page={page} /> : null}
       <Footer />
     </main>

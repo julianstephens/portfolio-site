@@ -4,6 +4,7 @@ published: '2025-11-06'
 path: /feature-flag-service
 repoUrl: 'https://github.com/julianstephens/feature-flag-service'
 summary: A scalable feature flag management system with REST and gRPC APIs
+complete: true
 ---
 
 # Feature Flag Service

@@ -38,23 +38,34 @@ declare global {
 
     type Nav =
       | {
-          text: string;
-          link: string;
-        }[]
+        text: string;
+        link: string;
+      }[]
       | [];
 
     type RSS = {
       limit?: number;
       customData?: string;
       stylesheet?: string;
-      xmlns?: { [key: string]: string };
+      xmlns?: { [key: string]: string; };
     };
 
     type Date = {
       locales: string;
       options: Intl.DateTimeFormatOptions;
     };
+
+    type About = {
+      bio: string;
+      photo?: string;
+      links: {
+        github: string;
+        linkedin: string;
+        resume: string;
+      };
+    };
   }
 }
 
-export {};
+export { };
+

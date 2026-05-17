@@ -4,6 +4,7 @@ published: '2026-05-17'
 path: /regula
 repoUrl: 'https://github.com/julianstephens/regula'
 summary: A PocketBase-backed personal learning management system
+complete: true
 ---
 
 # Regula

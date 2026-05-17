@@ -33,6 +33,27 @@ const path = post ? `/${post.slug}` : "";
 const permalink = site.url + (page ? page.url.current : path);
 ---
 
+<!-- Theme initialization script (prevent flash) -->
+<script is:inline>
+  // Initialize theme before page render to prevent flash
+  const getThemePreference = () => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  };
+  
+  const isDark = getThemePreference() === 'dark';
+  document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
+  
+  // Listen for system theme changes
+  if (typeof localStorage !== 'undefined' && !localStorage.getItem('theme')) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      document.documentElement.classList[e.matches ? 'add' : 'remove']('dark');
+    });
+  }
+</script>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F4V9JK9ZR4"></script><script>
   window.dataLayer = window.dataLayer || [];
@@ -47,6 +68,7 @@ const permalink = site.url + (page ? page.url.current : path);
 <meta charset="utf-8" />
 <meta name="generator" content="gh:importantimport/gumori" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="darkreader-lock" />
 <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
 <!-- Primary Meta Tags -->

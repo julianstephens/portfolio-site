@@ -6,6 +6,7 @@ repoUrl: 'https://github.com/julianstephens/daily-office-lectionary'
 summary: >-
   Discord Bot for BCP 1662 Daily Office Lectionary w/ BCP 1979 Psalter and
   Collects
+complete: true
 ---
 
 # Daily Office Lectionary Discord Bot

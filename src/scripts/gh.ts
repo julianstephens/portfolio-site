@@ -27,6 +27,9 @@ type GhFrontmatter = {
   path: string;
   repoUrl: string;
   summary: string;
+  complete?: boolean;
+  deployUrl?: string;
+  image?: string;
 };
 
 export type Response = {
@@ -35,6 +38,9 @@ export type Response = {
   downloadUrl: string;
   content: string;
   description: string | null;
+  homepage: string | null;
+  coverPhotoUrl: string | null;
+  complete: boolean;
 };
 
 const ENV = import.meta.env ?? process.env;
@@ -52,6 +58,23 @@ const gh = new Octokit({
 
 const toFMStr = (frontmatter: GhFrontmatter): string => {
   return matter.stringify("", frontmatter);
+};
+
+const getCoverPhoto = async (repo: string): Promise<string | null> => {
+  try {
+    const contents = await gh.rest.repos.getContent({
+      owner: ENV.GH_USER!,
+      repo,
+      path: "docs/img/cover.png",
+    });
+
+    if (contents.status !== 200) return null;
+    const data = contents.data;
+    if (Array.isArray(data) || data.type !== "file") return null;
+    return data.download_url ?? null;
+  } catch {
+    return null;
+  }
 };
 
 const getSiteFile = async (repo: string) => {
@@ -98,8 +121,15 @@ const getSiteData = async (): Promise<Response[]> => {
 
   // Batch processing: fetch SITE.md files in batches of 10 to optimize API usage
   const results = await batchProcess(repos, 10, async (repo) => {
-    const file = await getSiteFile(repo.name);
+    const [file, coverPhotoUrl] = await Promise.all([
+      getSiteFile(repo.name),
+      getCoverPhoto(repo.name),
+    ]);
     if (!file) return null;
+
+    const decoded = Buffer.from(file.content, "base64").toString("utf-8");
+    const parsed = matter(decoded);
+    const complete = parsed.data.complete !== false;
 
     console.log(`✓ Found SITE.md in ${repo.name}`);
     return {
@@ -108,6 +138,9 @@ const getSiteData = async (): Promise<Response[]> => {
       downloadUrl: file.downloadUrl || "",
       content: file.content,
       description: repo.description || null,
+      homepage: repo.homepage ?? null,
+      coverPhotoUrl,
+      complete,
     };
   });
 
@@ -128,10 +161,11 @@ const saveSiteFiles = async (): Promise<void> => {
   // Process all files in parallel with non-fatal error handling
   const writePromises = files.map(async (f) => {
     try {
-      const content = Buffer.from(f.content, "base64").toString("utf-8");
+      const raw = Buffer.from(f.content, "base64").toString("utf-8");
+      const { content } = matter(raw);
 
-      // Extract title from first heading
-      const firstLine = content.split("\n")[0];
+      // Extract title from first heading in the body
+      const firstLine = content.split("\n").find((l) => l.trim() !== "") ?? "";
       const title = firstLine.startsWith("#")
         ? firstLine.replace(/^#+\s*/, "").trim()
         : f.repoName;
@@ -142,6 +176,9 @@ const saveSiteFiles = async (): Promise<void> => {
         path: `/${f.repoName}`,
         repoUrl: f.repoUrl,
         summary: f.description || "",
+        complete: f.complete,
+        ...(f.homepage ? { deployUrl: f.homepage } : {}),
+        ...(f.coverPhotoUrl ? { image: f.coverPhotoUrl } : {}),
       };
 
       const saveLoc = path.join(outDir, `${f.repoName}.md`);

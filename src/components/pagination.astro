@@ -7,24 +7,38 @@ type PageUrl = {
 const { url } = Astro.props as { url: PageUrl };
 ---
 
-<nav>
-  <hr />
+<nav class="flex justify-end gap-4 w-full max-w-content-md mx-auto px-4 sm:px-6 lg:px-8 my-8">
   {
     url.next != null && (
-      <h3 style="border:0">
-        <a href={url.next} rel="next">
+      <h4 class="m-0 border-0">
+        <a 
+          href={url.next} 
+          rel="next"
+          class="hover:underline transition-colors"
+          style="color: #059669;"
+        >
           Older
         </a>
-      </h3>
+      </h4>
     )
   }
   {
     url.prev != null && (
-      <h3 style="border:0">
-        <a href={url.prev || "/"} rel="prev">
+      <h3 class="m-0 border-0">
+        <a 
+          href={url.prev || "/"} 
+          rel="prev"
+          class="hover:underline transition-colors"
+          style="color: #059669;"
+        >
           Newer
         </a>
       </h3>
     )
   }
+  <style>
+    .dark a {
+      color: #34d399 !important;
+    }
+  </style>
 </nav>

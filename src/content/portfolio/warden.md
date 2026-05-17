@@ -4,6 +4,7 @@ published: '2025-12-06'
 path: /warden
 repoUrl: 'https://github.com/julianstephens/warden'
 summary: CLI for encrypted backups
+complete: true
 ---
 
 # Warden — Encrypted Backup CLI

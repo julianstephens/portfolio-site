@@ -4,6 +4,8 @@ published: '2026-01-05'
 path: /daylit
 repoUrl: 'https://github.com/julianstephens/daylit'
 summary: 'A comprehensive daily structure and time-blocking system '
+complete: true
+deployUrl: 'https://julianstephens.net/daylit'
 ---
 
 # Daylit: Personal Productivity System

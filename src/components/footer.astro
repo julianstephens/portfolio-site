@@ -1,11 +1,24 @@
-<footer class="footer" style="padding:1rem 0">
-  <hr />
-  <div style="display:flex;flex-direction:column;">
-    <p style="margin-bottom: 0;">
-      Julian Stephens - <a href="https://github.com/julianstephens" target="_blank">
+<footer class="w-full max-w-content-md mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <hr class="border-[#e5e5e5] dark:border-[#2a2a2a]" />
+  <div class="flex flex-col gap-2 mt-6">
+    <p class="m-0 text-sm sm:text-base text-[#404040] dark:text-[#d4d4d4]">
+      Julian Stephens - <a 
+        href="https://github.com/julianstephens" 
+        target="_blank"
+        class="text-[#059669] dark:text-[#34d399] hover:underline transition-colors"
+      >
         https://github.com/julianstephens
       </a>
     </p>
-    <p>Contact me - <a href={`mailto:${import.meta.env.PUBLIC_CONTACT_EMAIL}`}>{import.meta.env.PUBLIC_CONTACT_EMAIL}</a></p>
+    <p class="m-0 text-sm sm:text-base text-[#404040] dark:text-[#d4d4d4]">
+      Contact me - <a 
+        href={`mailto:${import.meta.env.PUBLIC_CONTACT_EMAIL}`}
+        class="text-[#059669] dark:text-[#34d399] hover:underline transition-colors"
+      >
+        {import.meta.env.PUBLIC_CONTACT_EMAIL}
+      </a>
+    </p>
+  </div>
+</footer>
   </div>
 </footer>

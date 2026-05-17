@@ -4,6 +4,8 @@ published: '2023-12-17'
 path: /license-server
 repoUrl: 'https://github.com/julianstephens/license-server'
 summary: Server and CLI for managing software licenses.
+complete: true
+deployUrl: 'https://julianstephens.net/license-server'
 ---
 
 # License Server and Manager

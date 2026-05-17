@@ -4,6 +4,8 @@ published: '2025-12-06'
 path: /photo-gallery
 repoUrl: 'https://github.com/julianstephens/photo-gallery'
 summary: A full-stack gallery management tool optimized for Discord communities
+complete: true
+deployUrl: 'https://gallery.cyborgdev.cloud'
 ---
 
 # Photo Gallery 5000

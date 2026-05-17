@@ -1,19 +1,18 @@
-@media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
-  :is(div, pre, code)[data-theme="dark"] {
-    display: none;
-  }
+/* Light theme code blocks - hidden in dark mode */
+.dark :is(div, pre, code)[data-theme="light"] {
+  display: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  :is(div, pre, code)[data-theme="light"] {
-    display: none;
-  }
+/* Dark theme code blocks - hidden in light mode */
+:not(.dark) :is(div, pre, code)[data-theme="dark"] {
+  display: none;
 }
 
 pre > code {
   display: grid;
 }
 
+/* Line numbers for code blocks */
 code[data-line-numbers] {
   counter-reset: line;
 }
@@ -25,4 +24,40 @@ code[data-line-numbers] > .line::before {
   width: 1rem;
   margin-right: 2rem;
   text-align: right;
+  color: #737373;
+}
+
+.dark code[data-line-numbers] > .line::before {
+  color: #737373;
+}
+
+/* Language badge styling */
+pre[data-language]::before {
+  content: attr(data-language);
+  @apply absolute top-2 right-2 px-2 py-1 text-xs font-semibold rounded;
+  background-color: #e5e5e5;
+  color: #404040;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dark pre[data-language]::before {
+  background-color: #2a2a2a;
+  color: #d4d4d4;
+}
+
+pre {
+  @apply relative rounded-lg p-4 my-6 overflow-x-auto;
+  background-color: #f5f5f5;
+  border: 1px solid #e5e5e5;
+  /* Custom scrollbar for mobile */
+  @apply custom-scrollbar;
+  /* Smooth scrolling on mobile */
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+}
+
+.dark pre {
+  background-color: #1a1a1a;
+  border-color: #2a2a2a;
 }

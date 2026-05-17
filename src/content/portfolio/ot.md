@@ -6,6 +6,7 @@ repoUrl: 'https://github.com/julianstephens/ot'
 summary: >-
   CLI for choosing one non-negotiable commitment per day and tracking whether it
   happens
+complete: true
 ---
 
 # One Thing

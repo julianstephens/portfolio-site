@@ -4,6 +4,8 @@ published: '2023-07-02'
 path: /secure-file-share
 repoUrl: 'https://github.com/julianstephens/secure-file-share'
 summary: POC using short codes to securely share files and secrets
+complete: true
+deployUrl: 'https://julianstephens.net/secure-file-share'
 ---
 
 # Secure File Sharing

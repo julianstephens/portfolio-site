@@ -1,6 +1,6 @@
 ---
-import Post from "@components/post.astro";
 import Pagination from "@components/pagination.astro";
+import Post from "@components/post.astro";
 import type { CollectionEntry } from "astro:content";
 
 type PageData = {
@@ -22,5 +22,10 @@ const { page } = Astro.props as { page: PageData };
 const { url } = page;
 ---
 
-{page.data.map((post) => <Post post={post} preview={true} />)}
+<div class="w-full max-w-content-md mx-auto px-4 sm:px-6 lg:px-8 pb-3 pt-2">
+  <h2 class="m-0 text-xs font-semibold uppercase tracking-widest text-[#737373] dark:text-[#737373]">Projects</h2>
+</div>
+<div class="space-y-6 sm:space-y-8 py-2">
+  {page.data.map((post) => <Post post={post} preview={true} />)}
+</div>
 {(url.prev != null || url.next != null) && <Pagination url={url} />}

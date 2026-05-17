@@ -13,6 +13,8 @@ const portfolio = defineCollection({
         repoUrl: z.string().url().optional(),
         summary: z.string().optional(),
         image: z.string().optional(),
+        complete: z.boolean().optional(),
+        deployUrl: z.string().url().optional(),
         flags: z.array(z.string()).optional(),
     }),
 });
