@@ -3,7 +3,7 @@ title: Poll Anon
 published: '2026-05-17'
 path: /poll-anon
 repoUrl: 'https://github.com/julianstephens/poll-anon'
-summary: ''
+summary: 'A web app for anonymous polls '
 ---
 
 # Poll Anon
