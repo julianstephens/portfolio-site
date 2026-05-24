@@ -10,7 +10,18 @@ import remarkGfm from "remark-gfm";
 // https://astro.build/config
 export default defineConfig({
   site: "https://julianstephens.net",
-  integrations: [tailwind({ applyBaseStyles: false }), mermaid()],
+  integrations: [
+    tailwind({ applyBaseStyles: false }),
+    mermaid({
+      theme: 'neutral',
+      autoTheme: true,
+      mermaidConfig: {
+        startOnLoad: false,
+        logLevel: 'error',
+        securityLevel: 'strict'
+      }
+    })
+  ],
   markdown: {
     syntaxHighlight: false,
     remarkPlugins: [remarkGfm],

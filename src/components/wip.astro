@@ -1,0 +1,23 @@
+---
+import Post from "@components/post.astro";
+import type { CollectionEntry } from "astro:content";
+
+const { posts } = Astro.props as { posts: CollectionEntry<"portfolio">[] };
+---
+
+{
+  posts.length > 0 && (
+    <section class="mb-16">
+      <div class="w-full max-w-content-md mx-auto px-4 sm:px-6 lg:px-8 pb-3 pt-2">
+        <h2 class="m-0 text-xs font-semibold uppercase tracking-widest text-[#737373] dark:text-[#737373]">
+            Work in Progress
+        </h2>
+      </div>
+      <div class="space-y-6 sm:space-y-8 py-2">
+        {posts.map((post) => (
+          <Post post={post} preview={true} />
+        ))}
+      </div>
+    </section>
+  )
+}

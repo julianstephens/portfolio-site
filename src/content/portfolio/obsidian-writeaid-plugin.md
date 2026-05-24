@@ -1,8 +1,8 @@
 ---
 title: WriteAid — Obsidian Plugin for Multi‑Draft Novel Writing
-published: "2025-11-06"
+published: '2025-11-06'
 path: /obsidian-writeaid-plugin
-repoUrl: "https://github.com/julianstephens/obsidian-writeaid-plugin"
+repoUrl: 'https://github.com/julianstephens/obsidian-writeaid-plugin'
 summary: A novel writing plugin for Obsidian
 complete: true
 ---

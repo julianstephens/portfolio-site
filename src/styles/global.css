@@ -30,6 +30,90 @@
   }
 }
 
+/* Mermaid diagram containers */
+pre.mermaid {
+  overflow-x: auto;
+  cursor: zoom-in;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+pre.mermaid:hover {
+  outline: 2px solid #d4d4d4;
+}
+
+.dark pre.mermaid:hover {
+  outline: 2px solid #404040;
+}
+
+/* Mermaid fullscreen modal */
+.mermaid-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.mermaid-modal.open {
+  display: flex;
+}
+
+.mermaid-modal-content {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  width: 95vw;
+  height: 95vh;
+  overflow: auto;
+  padding: 2rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark .mermaid-modal-content {
+  background: #141414;
+}
+
+.mermaid-modal-content svg {
+  width: 100%;
+  height: 100%;
+  min-width: 600px;
+  display: block;
+}
+
+.mermaid-modal-close {
+  position: fixed;
+  top: 1rem;
+  right: 1.25rem;
+  font-size: 2rem;
+  line-height: 1;
+  color: #ffffff;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.mermaid-modal-close:hover {
+  opacity: 1;
+}
+
+.mermaid-modal-hint {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 1rem;
+  font-size: 0.75rem;
+  color: #a3a3a3;
+  user-select: none;
+}
+
 @layer utilities {
   /* Custom scrollbar styling for code blocks */
   .custom-scrollbar::-webkit-scrollbar {

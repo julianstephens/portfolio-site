@@ -78,3 +78,91 @@ const date = data.published ?? data.created;
     }
   </>
 </article>
+
+<script>
+  function initMermaidZoom() {
+    const mermaidEls = Array.from(document.querySelectorAll('pre.mermaid'));
+    if (mermaidEls.length === 0) return;
+
+    // Create modal once
+    let modal = document.getElementById('mermaid-modal') as HTMLElement | null;
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'mermaid-modal';
+      modal.className = 'mermaid-modal';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('aria-label', 'Diagram fullscreen view');
+
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'mermaid-modal-close';
+      closeBtn.textContent = '×';
+      closeBtn.setAttribute('aria-label', 'Close diagram');
+
+      const content = document.createElement('div');
+      content.className = 'mermaid-modal-content';
+
+      const hint = document.createElement('span');
+      hint.className = 'mermaid-modal-hint';
+      hint.textContent = 'Press Esc or click outside to close';
+
+      modal.appendChild(closeBtn);
+      modal.appendChild(content);
+      content.appendChild(hint);
+      document.body.appendChild(modal);
+
+      function closeModal() {
+        modal!.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+    }
+
+    const modalContent = modal.querySelector('.mermaid-modal-content') as HTMLElement;
+
+    // Use MutationObserver to detect when mermaid renders SVGs
+    function attachClickHandler(el: Element) {
+      if ((el as HTMLElement).dataset.mermaidZoom) return;
+      const svg = el.querySelector('svg');
+      if (!svg) return;
+      (el as HTMLElement).dataset.mermaidZoom = 'true';
+
+      el.addEventListener('click', () => {
+        const liveSvg = el.querySelector('svg');
+        if (!liveSvg) return;
+        // Clear previous content except hint
+        const hint = modalContent.querySelector('.mermaid-modal-hint');
+        modalContent.innerHTML = '';
+        modalContent.appendChild(liveSvg.cloneNode(true));
+        if (hint) modalContent.appendChild(hint);
+        modal!.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    }
+
+    // Attach to any already-rendered diagrams
+    mermaidEls.forEach(attachClickHandler);
+
+    // Watch for mermaid async rendering
+    const observer = new MutationObserver(() => {
+      mermaidEls.forEach(attachClickHandler);
+    });
+
+    mermaidEls.forEach((el) => {
+      observer.observe(el, { childList: true, subtree: true });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMermaidZoom);
+  } else {
+    initMermaidZoom();
+  }
+</script>
