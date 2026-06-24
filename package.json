@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
+    "@astrojs/markdown-remark": "^7.2.0",
     "@astrojs/rss": "^4.0.14",
     "@astrojs/sitemap": "^3.6.0",
     "@astrojs/ts-plugin": "^1.10.6",
@@ -50,6 +51,8 @@
   },
   "pnpm": {
     "overrides": {
+      "gray-matter@4.0.3>js-yaml": "3.14.1",
+      "js-yaml@>=5.0.0": "4.1.0",
       "@anthropic-ai/claude-code@<2.0.31": ">=2.0.31",
       "@anthropic-ai/claude-code@<2.0.65": ">=2.0.65",
       "lodash@>=4.0.0 <=4.17.22": ">=4.17.23",
@@ -66,7 +69,18 @@
       "astro@<6.1.6": ">=6.1.6",
       "@anthropic-ai/claude-code@<2.1.64": ">=2.1.64",
       "@anthropic-ai/claude-code@<2.1.75": ">=2.1.75",
-      "astro@<6.1.10": ">=6.1.10"
+      "astro@<6.1.10": ">=6.1.10",
+      "dompurify@=3.4.4": ">=3.4.5",
+      "esbuild@>=0.27.3 <0.28.1": ">=0.28.1",
+      "vite@>=7.0.0 <=7.3.4": ">=7.3.5",
+      "dompurify@<3.4.7": ">=3.4.7",
+      "dompurify@<=3.4.5": ">=3.4.6",
+      "dompurify@<3.4.9": ">=3.4.9",
+      "dompurify@>=3.0.0 <=3.4.7": ">=3.4.8",
+      "dompurify@<=3.4.6": ">=3.4.7",
+      "astro@<6.4.6": ">=6.4.6",
+      "@anthropic-ai/claude-code@>=0.2.54 <2.1.163": ">=2.1.163",
+      "dompurify@<=3.4.10": ">=3.4.11"
     }
   }
 }

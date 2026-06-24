@@ -1,10 +1,10 @@
-/* Light theme code blocks - hidden in dark mode */
-.dark :is(div, pre, code)[data-theme="light"] {
+/* Hide light-themed code render in dark mode */
+html.dark :is(div, pre, code)[data-theme*="light"] {
   display: none;
 }
 
-/* Dark theme code blocks - hidden in light mode */
-:not(.dark) :is(div, pre, code)[data-theme="dark"] {
+/* Hide dark-themed code render in light mode */
+html:not(.dark) :is(div, pre, code)[data-theme*="dark"] {
   display: none;
 }
 

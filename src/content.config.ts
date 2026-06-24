@@ -10,11 +10,11 @@ const portfolio = defineCollection({
     created: z.coerce.date().optional(),
     updated: z.coerce.date().optional(),
     path: z.string().optional(),
-    repoUrl: z.string().url().optional(),
+    repoUrl: z.url().optional(),
     summary: z.string().optional(),
     image: z.string().optional(),
     complete: z.boolean().optional(),
-    deployUrl: z.string().url().optional(),
+    deployUrl: z.url().optional(),
     flags: z.array(z.string()).optional(),
   }),
 });

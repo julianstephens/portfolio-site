@@ -78,7 +78,7 @@
     });
 
     // Add click event listener to all toggle buttons
-    themeToggles.forEach((toggle, index) => {
+    themeToggles.forEach((toggle, _index) => {
       // Clone to remove old listeners
       const newToggle = toggle.cloneNode(true);
       toggle.parentNode?.replaceChild(newToggle, toggle);
